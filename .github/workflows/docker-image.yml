@@ -18,7 +18,12 @@ jobs:
           java-version: "17"
           distribution: "temurin"
           cache: maven
+
+      - name: Maven Tests
+        run: mvn test
+
       - name: Create jar file for Spring Boot App
         run: mvn clean package --file pom.xml
+
       - name: Build the Docker image
         run: docker build . --file Dockerfile --tag docs-server-image:$(date +%s)
