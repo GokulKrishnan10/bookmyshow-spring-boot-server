@@ -20,4 +20,4 @@ jobs:
         run: |
           gh pr create -B main -H ${{ steps.vars.outputs.short_ref }} --title "Merge ${{ steps.vars.outputs.short_ref }} into main" --body "Created by GitHub Action"
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_ACTIONS }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
