@@ -1,0 +1,28 @@
+version: "3"
+services:
+  postgres:
+    container_name: postgres_container
+  spring_boot:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: spring_container
+    depends_on:
+      - postgres
+    deploy:
+      mode: replicated
+      replicas: 3
+  nginx_server:
+    build:
+      context: ./
+      dockerfile: Dockerfile_nginx
+    container_name: nginx_server
+    ports:
+      - "80:80"
+    depends_on:
+      - spring_boot
+      - postgres
+
+secrets:
+  private_key: private.pem
+  public_key: public.pem
