@@ -24,8 +24,8 @@ jobs:
           # Generate a random body
           body="Created by GitHub Action on $(date). This is a dynamically generated body for the pull request."
 
-          echo "::set-env name=PR_TITLE::$title"
-          echo "::set-env name=PR_BODY::$body"
+          export PR_TITLE="$title"
+          export PR_BODY="$body"
 
       - name: Creating Pull Requests
         run: |
