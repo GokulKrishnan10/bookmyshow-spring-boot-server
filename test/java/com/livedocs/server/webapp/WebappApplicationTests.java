@@ -8,7 +8,7 @@ class WebappApplicationTests {
 
 	@Test
 	void contextLoads() {
-		System.out.println("Changes observed at test/ directory but");
+		System.out.println("Changes observed at test/ directory");
 	}
 
 }
