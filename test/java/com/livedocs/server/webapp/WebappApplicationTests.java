@@ -8,7 +8,7 @@ class WebappApplicationTests {
 
 	@Test
 	void contextLoads() {
-		System.out.println("Changes observed  test/ but not work");
+		System.out.println("Changes  test/ but not work");
 	}
 
 }
