@@ -29,6 +29,6 @@ jobs:
 
       - name: Creating Pull Requests
         run: |
-          gh pr create -B main -H ${{ steps.vars.outputs.short_ref }} --title "Merge ${{ env.PR_TITLE  }} into main" --body "Created by GitHub Action at ${{ env.PR_BODY  }}"
+          gh pr create -B main -H ${{ steps.vars.outputs.short_ref }} --title "Merge ${PR_TITLE} into main" --body "Created by GitHub Action at ${PR_BODY}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
