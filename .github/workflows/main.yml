@@ -13,9 +13,11 @@ jobs:
         id: vars
         run: echo ::set-output name=short_ref::${GITHUB_REF#refs/*/}
 
-      - name: Creating Pull Requests
+      - name: Checkout repository
         uses: actions/checkout@v2
-        with:
-          gh-token: ${{ secrets.GITHUB_ACTIONS }}
+
+      - name: Creating Pull Requests
         run: |
           gh pr create -B main -H ${{ steps.vars.outputs.short_ref }} --title "Merge ${{ steps.vars.outputs.short_ref }} into main" --body "Created by GitHub Action"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_ACTIONS }}
