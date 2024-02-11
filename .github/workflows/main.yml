@@ -16,8 +16,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
+      - name: Generate Title and Body
+        run: |
+          # Generate a random title
+          title="Merge feat into main - $(date +%Y-%m-%d)"
+
+          # Generate a random body
+          body="Created by GitHub Action on $(date). This is a dynamically generated body for the pull request."
+
+          echo "::set-env name=PR_TITLE::$title"
+          echo "::set-env name=PR_BODY::$body"
+
       - name: Creating Pull Requests
         run: |
-          gh pr create -B main -H ${{ steps.vars.outputs.short_ref }} --title "Merge ${{ steps.vars.outputs.short_ref }} into main" --body "Created by GitHub Action"
+          gh pr create -B main -H ${{ steps.vars.outputs.short_ref }} --title "Merge ${{ env.PR_TITLE  }} into main" --body "Created by GitHub Action at ${{ env.PR_BODY  }}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
