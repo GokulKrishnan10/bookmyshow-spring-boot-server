@@ -14,6 +14,7 @@ jobs:
         run: echo ::set-output name=short_ref::${GITHUB_REF#refs/*/}
 
       - name: Creating Pull Requests
+        uses: actions/checkout@v2
         with:
           gh-token: ${{ secrets.GITHUB_ACTIONS }}
         run: |
