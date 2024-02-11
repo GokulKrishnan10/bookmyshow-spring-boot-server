@@ -13,11 +13,8 @@ jobs:
         id: vars
         run: echo ::set-output name=short_ref::${GITHUB_REF#refs/*/}
 
-      - name: Set up GitHub CLI
-        uses: actions/setup-gh@v1
+      - name: Creating Pull Requests
         with:
           gh-token: ${{ secrets.GITHUB_ACTIONS }}
-
-      - name: Creating Pull Requests
         run: |
           gh pr create -B main -H ${{ steps.vars.outputs.short_ref }} --title "Merge ${{ steps.vars.outputs.short_ref }} into main" --body "Created by GitHub Action"
