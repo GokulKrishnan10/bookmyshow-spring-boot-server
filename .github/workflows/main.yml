@@ -18,12 +18,6 @@ jobs:
 
       - name: Generate Title and Body
         run: |
-          # Generate a random title
-          title="Merge feat into main - $(date +%Y-%m-%d)"
-
-          # Generate a random body
-          body="Created by GitHub Action on $(date). This is a dynamically generated body for the pull request."
-
           echo "PR_TITLE=Merge ${{ steps.vars.outputs.short_ref }} into main - $(date)" >> $GITHUB_ENV
 
           echo "PR_BODY=Created by GitHub Action on $(date). This is a dynamically generated body for the pull request." >> $GITHUB_ENV
