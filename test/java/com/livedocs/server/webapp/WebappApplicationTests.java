@@ -8,7 +8,7 @@ class WebappApplicationTests {
 
 	@Test
 	void contextLoads() {
-		System.out.println("Changes observed  test/ but not ing");
+		System.out.println("Changes observed  test/ but not working");
 	}
 
 }
