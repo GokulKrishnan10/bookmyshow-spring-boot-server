@@ -9,7 +9,7 @@ class WebappApplicationTests {
 	@Test
 	void contextLoads() {
 		System.out.println("Changes made to test/ but not working don't");
-		System.out.println("Changes");
+		System.out.println("Changes amde");
 	}
 
 }
