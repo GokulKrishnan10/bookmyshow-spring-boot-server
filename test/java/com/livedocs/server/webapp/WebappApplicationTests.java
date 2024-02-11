@@ -8,7 +8,7 @@ class WebappApplicationTests {
 
 	@Test
 	void contextLoads() {
-		System.out.println("Changes made to test/ but not working don't know why");
+		System.out.println("Changes made to test/ but not working don't know");
 	}
 
 }
