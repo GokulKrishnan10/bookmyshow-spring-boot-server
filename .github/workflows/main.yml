@@ -24,11 +24,12 @@ jobs:
           # Generate a random body
           body="Created by GitHub Action on $(date). This is a dynamically generated body for the pull request."
 
-          export PR_TITLE="$title"
-          export PR_BODY="$body"
+          echo "PR_TITLE=Merge feat into main - $timestamp - $random_string" >> $GITHUB_ENV
+
+          echo "PR_BODY=Created by GitHub Action on $(date). This is a dynamically generated body for the pull request." >> $GITHUB_ENV
 
       - name: Creating Pull Requests
         run: |
-          gh pr create -B main -H ${{ steps.vars.outputs.short_ref }} --title "${PR_TITLE}" --body "${PR_BODY}"
+          gh pr create -B main -H ${{ steps.vars.outputs.short_ref }} --title "${{env.PR_TITLE}}" --body "${{env.PR_BODY}}"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
