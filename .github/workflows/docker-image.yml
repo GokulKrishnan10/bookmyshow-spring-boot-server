@@ -15,7 +15,7 @@ jobs:
 
       - name: sed on application.properties
         run: |
-          sed -i 's/localhost/172.0.0.2/g' src/main/resources/application.properties
+          sed -i 's/localhost/172.17.0.2/g' src/main/resources/application.properties
           sed -i 's|C:/Users/Gokul/private.pem|/home/private.pem|g' src/main/resources/application.properties
           sed -i 's|C:/Users/Gokul/public.pem|/home/public.pem|g' src/main/resources/application.properties
 
