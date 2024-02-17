@@ -41,7 +41,7 @@ public class Controller {
         return "Welcome to the Spring Server";
     }
 
-    @GetMapping("/path")
+    @GetMapping("/all")
     public ResponseEntity<Object> getMethodName() {
         return ResponseEntity.ok(JsonResponse.createResponse()
                 .setStatus(HttpStatus.ACCEPTED)
