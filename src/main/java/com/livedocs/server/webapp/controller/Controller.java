@@ -5,6 +5,8 @@ import com.livedocs.server.webapp.entity.Users;
 import com.livedocs.server.webapp.response.JsonResponse;
 
 import java.util.*;
+
+import com.livedocs.server.webapp.services.JwtService;
 import com.livedocs.server.webapp.services.UsersService;
 import com.livedocs.server.webapp.validation.Validation;
 
@@ -12,6 +14,7 @@ import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,6 +30,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class Controller {
     @Autowired
     private UsersService service;
+    @Autowired
+    private JwtService jwtService;
 
     private Validation valid = new Validation();
 
@@ -86,10 +91,17 @@ public class Controller {
     // Using Request Param api.example.com/delete?id=10
     @DeleteMapping("/delete")
     @Transactional
-    public ResponseEntity<Map<String, Object>> deleteUser(@RequestParam Long id) {
-        String message = service.deleteCustomer(id);
-        return ResponseEntity
-                .ok(Map.of("message", message, "status", HttpStatus.ACCEPTED));
+    public ResponseEntity<Object> deleteUser(@RequestParam Long id,
+            @RequestHeader MultiValueMap<String, String> headers) {
+        List<String> tokens = headers.get("Authorization");
+        if (jwtService.verifyJwtToken(tokens.get(0))) {
+            String message = service.deleteCustomer(id);
+            return ResponseEntity
+                    .ok(Map.of("message", message, "status", HttpStatus.ACCEPTED));
+
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(JsonResponse.createResponse()
+                .setStatus(HttpStatus.UNAUTHORIZED).setMessage("Unauthorized user").setData("Null"));
     }
 
 }
