@@ -13,7 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: sed on application.properties
+      - name: Sed on application.properties to remove local dependencies
         run: |
           sed -i 's/localhost/172.17.0.2/g' src/main/resources/application.properties
           sed -i 's|C:/Users/Gokul/private.pem|/home/private.pem|g' src/main/resources/application.properties
@@ -26,7 +26,7 @@ jobs:
           distribution: "temurin"
           cache: maven
 
-      - name: Maven Tests
+      - name: Run Maven Tests
         run: mvn test
 
       - name: Create jar file for Spring Boot App
@@ -41,7 +41,7 @@ jobs:
       - name: Docker build setup
         uses: docker/setup-buildx-action@v3
 
-      - name: Docker build and push
+      - name: Docker build and push to private repo in DockerHub
         uses: docker/build-push-action@v5
         with:
           context: .

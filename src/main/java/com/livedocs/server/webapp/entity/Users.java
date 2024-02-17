@@ -20,7 +20,7 @@ public class Users {
     private String country;
     @Column(name = "email", nullable = false, unique = true)
     private String email;
-    @Column(name="password", nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
     public Long getId() {
@@ -51,7 +51,7 @@ public class Users {
         return this.email;
     }
 
-    public String getPassword(){
+    public String getPassword() {
         return this.password;
     }
 
@@ -89,8 +89,8 @@ public class Users {
         return this;
     }
 
-    public Users setPassword(String password){
-        this.password=password;
+    public Users setPassword(String password) {
+        this.password = password;
         return this;
     }
 
