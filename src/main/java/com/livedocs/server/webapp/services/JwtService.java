@@ -20,7 +20,7 @@ public class JwtService {
     private int expiry;
 
     @Value("${jwt.secret-private-key.path}")
-    private String keyPath;
+    private String privateKeyPath;
 
     @Value("${jwt.secret-public-key.path}")
     private String publicKeyPath;
@@ -39,7 +39,7 @@ public class JwtService {
                 .setExpiration(Date.from(expiration))
                 .setHeader(headers)
                 .addClaims(map)
-                .signWith(Keys.hmacShaKeyFor(readPrivateKey().getBytes()))
+                .signWith(Keys.hmacShaKeyFor(readKeyFile(privateKeyPath).getBytes()))
                 .compact();
         return token;
     }
@@ -53,24 +53,12 @@ public class JwtService {
         return userMap;
     }
 
-    private String readPrivateKey() {
-        String privateKey;
+    private String readKeyFile(String path) {
+        String keyFile;
 
         try {
-            privateKey = Files.readString(Paths.get(keyPath), StandardCharsets.UTF_8);
-            return privateKey;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "";
-        }
-    }
-
-    private String readPublicKey() {
-        String publicKey;
-
-        try {
-            publicKey = Files.readString(Paths.get(publicKeyPath), StandardCharsets.UTF_8);
-            return publicKey;
+            keyFile = Files.readString(Paths.get(path), StandardCharsets.UTF_8);
+            return keyFile;
         } catch (Exception e) {
             e.printStackTrace();
             return "";
@@ -83,7 +71,7 @@ public class JwtService {
 
     public boolean verifyJwtToken(String token) {
         Claims claims = Jwts.parser()
-                .verifyWith(Keys.hmacShaKeyFor(readPublicKey().getBytes()))
+                .verifyWith(Keys.hmacShaKeyFor(readKeyFile(publicKeyPath).getBytes()))
                 .build()
                 .parseSignedClaims(token).getPayload();
         Date expiration = claims.getExpiration();
