@@ -50,4 +50,8 @@ public class UsersService {
         return encoder.encode(password);
     }
 
+    public List<Users> findByAgeLessThan(int age) {
+        return customerRepo.findAll().stream().filter(user -> (user.getAge() < age)).toList();
+    }
+
 }

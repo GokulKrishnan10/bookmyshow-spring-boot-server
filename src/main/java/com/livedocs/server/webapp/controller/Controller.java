@@ -88,6 +88,11 @@ public class Controller {
         return "Done";
     }
 
+    @GetMapping("/get")
+    public ResponseEntity<Object> getUserByAge(@RequestParam int age) {
+        return ResponseEntity.ok(service.findByAgeLessThan(age));
+    }
+
     // Using Request Param api.example.com/delete?id=10
     @DeleteMapping("/delete")
     @Transactional
