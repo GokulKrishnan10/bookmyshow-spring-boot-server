@@ -12,10 +12,10 @@ public class Users {
     private String name;
     @Column(name = "age")
     private int age;
-    @Column(name = "salary")
-    private int salary;
-    @Column(name = "city")
-    private String city;
+    @Column(name = "phone_number", nullable = false, unique = true)
+    private String phoneNumber;
+    @Column(name = "dob", nullable = false)
+    private String dob;
     @Column(name = "country")
     private String country;
     @Column(name = "email", nullable = false, unique = true)
@@ -35,16 +35,16 @@ public class Users {
         return this.age;
     }
 
-    public int getSalary() {
-        return this.salary;
-    }
-
-    public String getCity() {
-        return this.city;
+    public String getDOB() {
+        return this.dob;
     }
 
     public String getCountry() {
         return this.country;
+    }
+
+    public String getPhoneNumber() {
+        return this.phoneNumber;
     }
 
     public String getEmail() {
@@ -69,13 +69,8 @@ public class Users {
         return this;
     }
 
-    public Users setSalary(int salary) {
-        this.salary = salary;
-        return this;
-    }
-
-    public Users setCity(String city) {
-        this.city = city;
+    public Users setDOB(String dob) {
+        this.dob = dob;
         return this;
     }
 
@@ -89,6 +84,11 @@ public class Users {
         return this;
     }
 
+    public Users setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+        return this;
+    }
+
     public Users setPassword(String password) {
         this.password = password;
         return this;
@@ -97,12 +97,12 @@ public class Users {
     @Override
     public String toString() {
         return "Customer{ id:" + this.getId() + ", name:" + this.getName() + ",age:" + this.getAge() + ",city:"
-                + this.getCity() + ",country:" + this.getCountry() + ",email" + this.getEmail() + "}";
+                + this.getDOB() + ",country:" + this.getCountry() + ",email" + this.getEmail() + "}";
     }
 
     public boolean equals(Users c1) {
         return this.getId() == c1.getId() && this.getName().equals(this.getName()) && this.getAge() == c1.getAge()
-                && this.getCity().equals(c1.getCity()) && this.getCountry().equals(c1.getCountry())
+                && this.getDOB().equals(c1.getDOB()) && this.getCountry().equals(c1.getCountry())
                 && this.getEmail().equals(c1.getEmail());
     }
 
