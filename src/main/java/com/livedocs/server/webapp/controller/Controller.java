@@ -62,10 +62,11 @@ public class Controller {
         Users cusObj = Users.create()
                 .setName(entity.getName())
                 .setAge(entity.getAge())
-                .setCity(entity.getCity())
-                .setPassword(service.getHashedPassword(entity.getPassword()))
+                .setDOB(entity.getDOB())
+                .setPhoneNumber(entity.getPhoneNumber())
                 .setCountry(entity.getCountry())
-                .setEmail(entity.getEmail());
+                .setEmail(entity.getEmail())
+                .setPassword(service.getHashedPassword(entity.getPassword()));
         return ResponseEntity.ok(service.saveCustomer(cusObj));
     }
 
