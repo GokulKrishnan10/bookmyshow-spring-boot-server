@@ -25,7 +25,6 @@ public class JwtService {
     @Value("${jwt.secret-public-key.path}")
     private String publicKeyPath;
 
-    @Deprecated
     public String generateJwtToken(Users user) {
         Map<String, Object> map = addClaims(user);
         Map<String, Object> headers = new HashMap<>();
@@ -34,11 +33,10 @@ public class JwtService {
         Instant issuedAt = Instant.now().truncatedTo(ChronoUnit.SECONDS);
         Instant expiration = issuedAt.plus(3, ChronoUnit.DAYS);
 
-        String token = Jwts.builder()
-                .setIssuedAt(Date.from(issuedAt))
-                .setExpiration(Date.from(expiration))
-                .setHeader(headers)
-                .addClaims(map)
+        String token = Jwts.builder().issuer("GokulaKrishnanE")
+                .issuedAt(Date.from(issuedAt))
+                .claims(map)
+                .expiration(Date.from(expiration))
                 .signWith(Keys.hmacShaKeyFor(readKeyFile(privateKeyPath).getBytes()))
                 .compact();
         return token;
