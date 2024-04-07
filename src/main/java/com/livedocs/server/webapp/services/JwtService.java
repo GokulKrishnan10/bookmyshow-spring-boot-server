@@ -53,7 +53,6 @@ public class JwtService {
 
     private String readKeyFile(String path) {
         String keyFile;
-
         try {
             keyFile = Files.readString(Paths.get(path), StandardCharsets.UTF_8);
             return keyFile;

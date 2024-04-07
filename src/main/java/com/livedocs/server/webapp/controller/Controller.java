@@ -8,7 +8,6 @@ import java.util.*;
 
 import com.livedocs.server.webapp.services.JwtService;
 import com.livedocs.server.webapp.services.UsersService;
-import com.livedocs.server.webapp.validation.Validation;
 
 import jakarta.transaction.Transactional;
 
@@ -33,8 +32,6 @@ public class Controller {
     @Autowired
     private JwtService jwtService;
 
-    private Validation valid = new Validation();
-
     // Using path variable like api.example.com/gokul/name
     // @RequestMapping("/gokul/{id}")
     // public String gokul(@PathVariable("id") String id) {
@@ -56,10 +53,8 @@ public class Controller {
 
     @PostMapping("/create/customer")
     @Transactional
-    public ResponseEntity<String> createUser(@RequestBody Users entity) {
-        if (valid.validateRequestBody(entity) || service.verifyUser(entity))
-            return ResponseEntity.badRequest().body("Error");
-        Users cusObj = Users.create()
+    public ResponseEntity<Object> createUser(@RequestBody Users entity) {
+        Users user = Users.create()
                 .setName(entity.getName())
                 .setAge(entity.getAge())
                 .setDOB(entity.getDOB())
@@ -67,16 +62,18 @@ public class Controller {
                 .setCountry(entity.getCountry())
                 .setEmail(entity.getEmail())
                 .setPassword(service.getHashedPassword(entity.getPassword()));
-        return ResponseEntity.ok(service.saveCustomer(cusObj));
+
+        return ResponseEntity.status(HttpStatus.OK).body(JsonResponse.createResponse()
+                .setData(service.saveCustomer(user)).setMessage("User created successfully").setStatus(HttpStatus.OK));
     }
 
     @PostMapping("/login")
     public ResponseEntity<Object> login(@RequestBody Users user) {
-        return ResponseEntity.ok(
-                JsonResponse.createResponse()
-                        .setMessage("success")
-                        .setStatus(HttpStatus.ACCEPTED)
-                        .setData(service.getJwtToken(user)));
+        Object response = JsonResponse.createResponse()
+                .setMessage("success")
+                .setStatus(HttpStatus.ACCEPTED)
+                .setData(service.getJwtToken(user));
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/verify")
