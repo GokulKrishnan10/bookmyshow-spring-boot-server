@@ -51,7 +51,7 @@ public class Controller {
                 .setData(service.getAll()));
     }
 
-    @PostMapping("/create/customer")
+    @PostMapping("/customer")
     @Transactional
     public ResponseEntity<Object> createUser(@RequestBody Users entity) {
         Users user = Users.create()
@@ -63,8 +63,14 @@ public class Controller {
                 .setEmail(entity.getEmail())
                 .setPassword(service.getHashedPassword(entity.getPassword()));
 
-        return ResponseEntity.status(HttpStatus.OK).body(JsonResponse.createResponse()
+        return ResponseEntity.status(HttpStatus.CREATED).body(JsonResponse.createResponse()
                 .setData(service.saveCustomer(user)).setMessage("User created successfully").setStatus(HttpStatus.OK));
+    }
+
+    @DeleteMapping("/customer")
+    @Transactional
+    public ResponseEntity<Object> deleteCustomerUsingMail(@RequestBody String mail) {
+        return ResponseEntity.ok(service.deleteUserByEmail(mail));
     }
 
     @PostMapping("/login")

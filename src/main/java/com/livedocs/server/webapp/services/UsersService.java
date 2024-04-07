@@ -11,32 +11,42 @@ import com.livedocs.server.webapp.repository.UsersRepository;
 @Service
 public class UsersService {
     @Autowired
-    private UsersRepository customerRepo;
+    private UsersRepository userRepo;
     @Autowired
     private JwtService service;
 
     @Transactional
     public String saveCustomer(Users obj) {
-        customerRepo.save(obj);
+        userRepo.save(obj);
         return obj.getId().toString();
     }
 
     @Transactional
     public String deleteCustomer(Long id) {
         try {
-            customerRepo.deleteById(id);
+            userRepo.deleteById(id);
             return "User deletion Successful";
         } catch (Exception e) {
             return "User does not present";
         }
     }
 
+    @Transactional
+    public String deleteUserByEmail(String mail) {
+        try {
+            userRepo.deleteByEmail(mail);
+            return "User deletion successful";
+        } catch (Exception e) {
+            return "User not Found";
+        }
+    }
+
     public List<Users> getAll() {
-        return customerRepo.findAll();
+        return userRepo.findAll();
     }
 
     public boolean verifyUser(Users user) {
-        return !customerRepo.findByEmail(user.getEmail()).isEmpty();
+        return !userRepo.findByEmail(user.getEmail()).isEmpty();
     }
 
     public String getJwtToken(Users user) {
@@ -51,7 +61,7 @@ public class UsersService {
     }
 
     public List<Users> findByAgeLessThan(int age) {
-        return customerRepo.findAll().stream().filter(user -> (user.getAge() < age)).toList();
+        return userRepo.findAll().stream().filter(user -> (user.getAge() < age)).toList();
     }
 
 }
