@@ -3,8 +3,10 @@ package com.livedocs.server.webapp.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "users")
-public class Users {
+@Table(name = User.TABLE_NAME)
+public class User {
+    public static final String TABLE_NAME = "users";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -55,41 +57,41 @@ public class Users {
         return this.password;
     }
 
-    public static Users create() {
-        return new Users();
+    public static User create() {
+        return new User();
     }
 
-    public Users setName(String name) {
+    public User setName(String name) {
         this.name = name;
         return this;
     }
 
-    public Users setAge(int age) {
+    public User setAge(int age) {
         this.age = age;
         return this;
     }
 
-    public Users setDOB(String dob) {
+    public User setDOB(String dob) {
         this.dob = dob;
         return this;
     }
 
-    public Users setCountry(String country) {
+    public User setCountry(String country) {
         this.country = country;
         return this;
     }
 
-    public Users setEmail(String email) {
+    public User setEmail(String email) {
         this.email = email;
         return this;
     }
 
-    public Users setPhoneNumber(String phoneNumber) {
+    public User setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
         return this;
     }
 
-    public Users setPassword(String password) {
+    public User setPassword(String password) {
         this.password = password;
         return this;
     }
@@ -100,7 +102,7 @@ public class Users {
                 + this.getDOB() + ",country:" + this.getCountry() + ",email" + this.getEmail() + "}";
     }
 
-    public boolean equals(Users c1) {
+    public boolean equals(User c1) {
         return this.getId() == c1.getId() && this.getName().equals(this.getName()) && this.getAge() == c1.getAge()
                 && this.getDOB().equals(c1.getDOB()) && this.getCountry().equals(c1.getCountry())
                 && this.getEmail().equals(c1.getEmail());

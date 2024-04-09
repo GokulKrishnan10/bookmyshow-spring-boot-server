@@ -1,19 +1,18 @@
 package com.livedocs.server.webapp.controller;
 
 import org.springframework.web.bind.annotation.RestController;
-import com.livedocs.server.webapp.entity.Users;
+import com.livedocs.server.webapp.entity.User;
 import com.livedocs.server.webapp.response.JsonResponse;
 
 import java.util.*;
 
 import com.livedocs.server.webapp.services.JwtService;
-import com.livedocs.server.webapp.services.UsersService;
+import com.livedocs.server.webapp.services.UserService;
 
 import jakarta.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/api")
 public class Controller {
     @Autowired
-    private UsersService service;
+    private UserService service;
     @Autowired
     private JwtService jwtService;
 
@@ -47,14 +46,14 @@ public class Controller {
     public ResponseEntity<Object> getMethodName() {
         return ResponseEntity.ok(JsonResponse.createResponse()
                 .setStatus(HttpStatus.ACCEPTED)
-                .setMessage("Users list returned")
+                .setMessage("User list returned")
                 .setData(service.getAll()));
     }
 
     @PostMapping("/customer")
     @Transactional
-    public ResponseEntity<Object> createUser(@RequestBody Users entity) {
-        Users user = Users.create()
+    public ResponseEntity<Object> createUser(@RequestBody User entity) {
+        User user = User.create()
                 .setName(entity.getName())
                 .setAge(entity.getAge())
                 .setDOB(entity.getDOB())
@@ -73,8 +72,8 @@ public class Controller {
         return ResponseEntity.ok(service.deleteUserByEmail(mail));
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<Object> login(@RequestBody Users user) {
+    @PostMapping("/jwttoken")
+    public ResponseEntity<Object> login(@RequestBody User user) {
         Object response = JsonResponse.createResponse()
                 .setMessage("success")
                 .setStatus(HttpStatus.ACCEPTED)
@@ -90,11 +89,6 @@ public class Controller {
         List<String> tokens = headers.get("Authorization");
         System.out.println("Authorization Headers " + tokens);
         return "Done";
-    }
-
-    @GetMapping("/get")
-    public ResponseEntity<Object> getUserByAge(@RequestParam int age) {
-        return ResponseEntity.ok(service.findByAgeLessThan(age));
     }
 
     // Using Request Param api.example.com/delete?id=10

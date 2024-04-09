@@ -5,18 +5,18 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.*;
 import jakarta.transaction.Transactional;
-import com.livedocs.server.webapp.entity.Users;
-import com.livedocs.server.webapp.repository.UsersRepository;
+import com.livedocs.server.webapp.entity.User;
+import com.livedocs.server.webapp.repository.UserRepository;
 
 @Service
-public class UsersService {
+public class UserService {
     @Autowired
-    private UsersRepository userRepo;
+    private UserRepository userRepo;
     @Autowired
     private JwtService service;
 
     @Transactional
-    public String saveCustomer(Users obj) {
+    public String saveCustomer(User obj) {
         userRepo.save(obj);
         return obj.getId().toString();
     }
@@ -41,15 +41,15 @@ public class UsersService {
         }
     }
 
-    public List<Users> getAll() {
+    public List<User> getAll() {
         return userRepo.findAll();
     }
 
-    public boolean verifyUser(Users user) {
+    public boolean verifyUser(User user) {
         return !userRepo.findByEmail(user.getEmail()).isEmpty();
     }
 
-    public String getJwtToken(Users user) {
+    public String getJwtToken(User user) {
         if (!verifyUser(user))
             return "User, does Not exist";
         return service.generateJwtToken(user);
@@ -60,7 +60,7 @@ public class UsersService {
         return encoder.encode(password);
     }
 
-    public List<Users> findByAgeLessThan(int age) {
+    public List<User> findByAgeLessThan(int age) {
         return userRepo.findAll().stream().filter(user -> (user.getAge() < age)).toList();
     }
 

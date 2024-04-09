@@ -8,9 +8,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "sys_configs")
-public class SysConfigs {
-
+@Table(name = SysConfig.TABLE_NAME)
+public class SysConfig {
+    public static final String TABLE_NAME = "sys_configs";
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

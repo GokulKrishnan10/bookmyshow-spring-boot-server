@@ -1,7 +1,6 @@
 package com.livedocs.server.webapp.response;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 
 public class JsonResponse {
     private HttpStatus status;

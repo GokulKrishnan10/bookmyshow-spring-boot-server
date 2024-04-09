@@ -8,7 +8,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import com.livedocs.server.webapp.entity.Users;
+import com.livedocs.server.webapp.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -25,7 +25,7 @@ public class JwtService {
     @Value("${jwt.secret-public-key.path}")
     private String publicKeyPath;
 
-    public String generateJwtToken(Users user) {
+    public String generateJwtToken(User user) {
         Map<String, Object> map = addClaims(user);
         Map<String, Object> headers = new HashMap<>();
         headers.put("alg", "HS256");
@@ -42,7 +42,7 @@ public class JwtService {
         return token;
     }
 
-    private Map<String, Object> addClaims(Users user) {
+    private Map<String, Object> addClaims(User user) {
         Map<String, Object> userMap = new HashMap<>();
         userMap.put("name", user.getName());
         userMap.put("age", user.getAge());
