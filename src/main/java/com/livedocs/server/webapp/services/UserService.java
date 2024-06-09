@@ -1,11 +1,13 @@
 package com.livedocs.server.webapp.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.*;
 import jakarta.transaction.Transactional;
 import com.livedocs.server.webapp.entity.User;
+import com.livedocs.server.webapp.exception.AppException;
 import com.livedocs.server.webapp.repository.UserRepository;
 
 @Service
@@ -22,22 +24,26 @@ public class UserService {
     }
 
     @Transactional
-    public String deleteCustomer(Long id) {
+    public String deleteCustomer(Long id) throws AppException {
         try {
             userRepo.deleteById(id);
             return "User deletion Successful";
         } catch (Exception e) {
-            return "User does not present";
+            throw AppException.builder()
+                    .message("User Not Found")
+                    .status(HttpStatus.NOT_FOUND).build();
         }
     }
 
     @Transactional
-    public String deleteUserByEmail(String mail) {
+    public String deleteUserByEmail(String mail) throws AppException {
         try {
             userRepo.deleteByEmail(mail);
             return "User deletion successful";
         } catch (Exception e) {
-            return "User not Found";
+            throw AppException.builder()
+                    .message("User Not Found")
+                    .status(HttpStatus.NOT_FOUND).build();
         }
     }
 
@@ -49,9 +55,12 @@ public class UserService {
         return !userRepo.findByEmail(user.getEmail()).isEmpty();
     }
 
-    public String getJwtToken(User user) {
-        if (!verifyUser(user))
-            return "User, does Not exist";
+    public String getJwtToken(User user) throws AppException {
+        if (!verifyUser(user)) {
+            throw AppException.builder()
+                    .message("User Not Found")
+                    .status(HttpStatus.NOT_FOUND).build();
+        }
         return service.generateJwtToken(user);
     }
 
