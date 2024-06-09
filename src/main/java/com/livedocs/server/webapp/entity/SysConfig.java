@@ -9,6 +9,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = SysConfig.TABLE_NAME)
+@Data
 public class SysConfig {
     public static final String TABLE_NAME = "sys_configs";
     @Id

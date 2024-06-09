@@ -1,10 +1,5 @@
 package com.livedocs.server.webapp.dto;
 
-public class UserDto {
-    private String name;
-    private int age;
-    private String phoneNumber;
-    private String dob;
-    private String country;
-    private String email;
+public record UserDto(Long id, String name, int age, String phoneNumber,
+        String dob, String country, String email) {
 }
