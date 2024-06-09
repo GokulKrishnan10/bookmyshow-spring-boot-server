@@ -1,11 +1,17 @@
 package com.livedocs.server.webapp.entity;
 
+import java.sql.Timestamp;
+
+import org.hibernate.annotations.CurrentTimestamp;
+
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 
 @Entity
 @Table(name = User.TABLE_NAME)
-@Data
+@Builder
+@Getter
 public class User {
     public static final String TABLE_NAME = "users";
 
@@ -26,5 +32,8 @@ public class User {
     private String email;
     @Column(name = "password", nullable = false)
     private String password;
+    @Column(name = "created_at", nullable = false, updatable = false)
+    @CurrentTimestamp
+    private Timestamp createdAt;
 
 }

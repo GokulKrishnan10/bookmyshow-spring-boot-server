@@ -1,11 +1,15 @@
 package com.livedocs.server.webapp.entity;
 
+import java.sql.Timestamp;
+
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Builder;
 
 @Entity
 @Table(name = UserMFA.TABLE_NAME)
-@Data
+@Builder
 public class UserMFA {
     public static final String TABLE_NAME = "users_mfa";
     @Id
@@ -24,5 +28,9 @@ public class UserMFA {
 
     @Column(name = "qr_image")
     private String qrImage;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    @CreationTimestamp
+    private Timestamp createdAt;
 
 }

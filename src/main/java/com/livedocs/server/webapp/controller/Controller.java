@@ -53,14 +53,15 @@ public class Controller {
     @PostMapping("/customer")
     @Transactional
     public ResponseEntity<Object> createUser(@RequestBody User entity) {
-        User user = User.create()
-                .setName(entity.getName())
-                .setAge(entity.getAge())
-                .setDOB(entity.getDOB())
-                .setPhoneNumber(entity.getPhoneNumber())
-                .setCountry(entity.getCountry())
-                .setEmail(entity.getEmail())
-                .setPassword(service.getHashedPassword(entity.getPassword()));
+
+        User user = User.builder()
+                .name(entity.getName())
+                .age(entity.getAge())
+                .dob(entity.getDob())
+                .phoneNumber(entity.getPhoneNumber())
+                .country(entity.getCountry())
+                .email(entity.getEmail())
+                .password(service.getHashedPassword(entity.getPassword())).build();
 
         return ResponseEntity.status(HttpStatus.CREATED).body(JsonResponse.createResponse()
                 .setData(service.saveCustomer(user)).setMessage("User created successfully").setStatus(HttpStatus.OK));
