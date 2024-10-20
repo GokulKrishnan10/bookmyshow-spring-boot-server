@@ -30,19 +30,19 @@ public class GlobalExceptionHandler {
 
         @ExceptionHandler(UsernameNotFoundException.class)
         public ResponseEntity<Object> handleExceptionForUser(UsernameNotFoundException ex) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
                                 .body(JsonResponse.builder()
-                                                .message("Cannot do this operation, as you are barred from this"
+                                                .message("Specified User not Found"
                                                                 + ex.getMessage())
-                                                .status(HttpStatus.FORBIDDEN).build());
+                                                .status(HttpStatus.NOT_FOUND).build());
         }
 
         @ExceptionHandler(Exception.class)
         public ResponseEntity<Object> handleGeneralException(Exception e) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                                 .body(JsonResponse.builder()
                                                 .message(e.getMessage())
-                                                .status(HttpStatus.BAD_REQUEST).build());
+                                                .status(HttpStatus.INTERNAL_SERVER_ERROR).build());
         }
 
 }
