@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.scheduler.server.webapp.enums.JobStatus;
+import com.scheduler.server.webapp.jobs.defns.JobType;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,7 +37,8 @@ public class Job implements Serializable {
     private Long id;
 
     @Column(name = "job_name", nullable = false)
-    private String jobName;
+    @Enumerated(EnumType.ORDINAL)
+    private JobType jobName;
 
     @Column(name = "params")
     private String params;

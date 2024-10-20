@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -17,8 +18,11 @@ import com.google.gson.JsonObject;
 import com.scheduler.server.webapp.entity.Job;
 import com.scheduler.server.webapp.enums.JobStatus;
 import com.scheduler.server.webapp.exception.AppException;
-import com.scheduler.server.webapp.jobs.DeleteUserJob;
+import com.scheduler.server.webapp.jobs.ScheduledJob;
+import com.scheduler.server.webapp.jobs.defns.JobType;
 import com.scheduler.server.webapp.services.JobService;
+
+import java.util.Map;
 
 @Component
 public class JobComponent {
@@ -26,8 +30,12 @@ public class JobComponent {
     @Autowired
     JobService jobService;
 
+    private final Map<JobType, ScheduledJob> jobMap;
+
     @Autowired
-    DeleteUserJob job;
+    public JobComponent(Map<JobType, ScheduledJob> jobMap) {
+        this.jobMap = jobMap;
+    }
 
     @Scheduled(fixedRate = 500)
     public void readFromJobTable() {
@@ -36,7 +44,7 @@ public class JobComponent {
             System.out.println("Job list " + jobs.toString() + " executed at " + Timestamp.from(Instant.now()));
         }
         jobs.forEach(schJob -> {
-            invokeMethodFromClass("com.scheduler.server.webapp.jobs." + schJob.getJobName(),
+            executeJob(schJob.getJobName(),
                     getJsonFromString(schJob.getParams()));
             jobService.deleteById(schJob.getId());
             jobService.insertSuccess(schJob, JobStatus.SUCCESS);
@@ -44,15 +52,25 @@ public class JobComponent {
 
     }
 
-    public JsonObject getJsonFromString(String params) {
+    private ScheduledJob getScheduledJob(JobType jobType) {
+        return this.jobMap.get(jobType);
+    }
+
+    private void executeJob(JobType jobName, JsonObject params) {
+        ScheduledJob job = getScheduledJob(jobName);
+        job.initialize(params);
+        job.executeJob();
+    }
+
+    private JsonObject getJsonFromString(String params) {
         JsonObject json = new Gson().fromJson(params, JsonObject.class);
         return json;
     }
 
     public void invokeMethodFromClass(String className, JsonObject params) {
         try {
-            job.initialize(params);
-            job.executeJob();
+            // job.initialize(params);
+            // job.executeJob();
         } catch (Exception ex) {
             throw AppException.builder().status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .message("Job Definition not found " + ex.getLocalizedMessage())

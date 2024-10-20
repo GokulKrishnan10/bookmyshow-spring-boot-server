@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.scheduler.server.webapp.enums.JobStatus;
+import com.scheduler.server.webapp.jobs.defns.JobType;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -32,7 +33,8 @@ public class JobResult {
     private Long id;
 
     @Column(name = "job_name", nullable = false)
-    private String jobName;
+    @Enumerated(EnumType.ORDINAL)
+    private JobType jobName;
 
     @Column(name = "created_at", nullable = false)
     @CreationTimestamp

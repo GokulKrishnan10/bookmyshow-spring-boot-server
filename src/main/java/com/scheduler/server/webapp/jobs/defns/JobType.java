@@ -1,6 +1,6 @@
 package com.scheduler.server.webapp.jobs.defns;
 
-public enum Jobs {
+public enum JobType {
     DELETE_USER(10),
     SEND_EMAIL(20),
     SEND_SMS(30),
@@ -10,7 +10,7 @@ public enum Jobs {
 
     int value;
 
-    Jobs(int value) {
+    JobType(int value) {
         this.value = value;
     }
 
