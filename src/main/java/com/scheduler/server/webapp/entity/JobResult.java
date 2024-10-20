@@ -9,7 +9,7 @@ import java.sql.Timestamp;
 import org.hibernate.annotations.CreationTimestamp;
 
 import com.scheduler.server.webapp.enums.JobStatus;
-import com.scheduler.server.webapp.jobs.defns.JobType;
+import com.scheduler.server.webapp.enums.JobType;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

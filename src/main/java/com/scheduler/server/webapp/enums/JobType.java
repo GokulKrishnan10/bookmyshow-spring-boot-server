@@ -1,4 +1,4 @@
-package com.scheduler.server.webapp.jobs.defns;
+package com.scheduler.server.webapp.enums;
 
 public enum JobType {
     DELETE_USER(10),

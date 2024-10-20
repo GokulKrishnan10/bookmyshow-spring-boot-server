@@ -1,14 +1,10 @@
 package com.scheduler.server.webapp.components;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -17,9 +13,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.scheduler.server.webapp.entity.Job;
 import com.scheduler.server.webapp.enums.JobStatus;
+import com.scheduler.server.webapp.enums.JobType;
 import com.scheduler.server.webapp.exception.AppException;
 import com.scheduler.server.webapp.jobs.ScheduledJob;
-import com.scheduler.server.webapp.jobs.defns.JobType;
 import com.scheduler.server.webapp.services.JobService;
 
 import java.util.Map;
@@ -48,6 +44,7 @@ public class JobComponent {
                     getJsonFromString(schJob.getParams()));
             jobService.deleteById(schJob.getId());
             jobService.insertSuccess(schJob, JobStatus.SUCCESS);
+            System.out.println(schJob.getJobName().name() + " executed at " + Timestamp.from(Instant.now()));
         });
 
     }
@@ -59,7 +56,8 @@ public class JobComponent {
     private void executeJob(JobType jobName, JsonObject params) {
         ScheduledJob job = getScheduledJob(jobName);
         job.initialize(params);
-        job.executeJob();
+        String result = job.executeJob();
+        System.out.println("Result " + result);
     }
 
     private JsonObject getJsonFromString(String params) {
