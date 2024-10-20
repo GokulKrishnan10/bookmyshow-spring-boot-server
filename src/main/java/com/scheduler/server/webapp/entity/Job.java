@@ -1,5 +1,6 @@
 package com.scheduler.server.webapp.entity;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 
 import org.hibernate.annotations.CreationTimestamp;
@@ -13,41 +14,34 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
-
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = Job.TABLE_NAME)
+@Table(name = Job.TABLE_NAME, schema = "\"jobs\"", indexes = {
+        @Index(name = "scheduled_at_index", columnList = "scheduled_at") })
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Getter
-public class Job {
+public class Job implements Serializable {
     public static final String TABLE_NAME = "jobs";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long jobId;
+    private Long id;
 
     @Column(name = "job_name", nullable = false)
     private String jobName;
 
-    @Column(name = "execution_time", nullable = false)
-    private String executionTime;
+    @Column(name = "params")
+    private String params;
 
-    @Column(name = "job_status")
-    @Enumerated(EnumType.ORDINAL)
-    private JobStatus jobStatus;
+    @Column(name = "scheduled_at", nullable = false)
+    private Timestamp scheduledAt;
 
-    @Column(name = "number_of_failures", columnDefinition = "int default 0")
-    private int numberOfFailures;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    @CreationTimestamp
-    private Timestamp createdAt;
-
-    @Column(name = "executed_at", nullable = false)
-    private Timestamp executedAt;
-
-    @Column(name = "picked_by", nullable = false)
-    private String pickedBy;
 }

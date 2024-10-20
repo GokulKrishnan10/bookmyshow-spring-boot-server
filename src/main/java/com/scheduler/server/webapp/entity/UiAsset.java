@@ -14,7 +14,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Entity
-@Table(name = UiAsset.TABLE_NAME)
+@Table(name = UiAsset.TABLE_NAME, schema = "\"user\"")
 @Builder
 @Getter
 public class UiAsset {

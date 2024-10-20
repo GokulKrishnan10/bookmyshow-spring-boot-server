@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 
 @Entity
-@Table(name = UserMFA.TABLE_NAME)
+@Table(name = UserMFA.TABLE_NAME, schema = "\"user\"")
 @Builder
 public class UserMFA {
     public static final String TABLE_NAME = "users_mfa";
@@ -21,7 +21,7 @@ public class UserMFA {
     @Column(name = "secret_key", nullable = false)
     private String key;
 
-    @Column(name = "mfa_enabled", nullable = false, columnDefinition = "default false")
+    @Column(name = "mfa_enabled", nullable = false)
     private Boolean mfaEnabled;
 
     @Column(name = "qr_image", nullable = false)

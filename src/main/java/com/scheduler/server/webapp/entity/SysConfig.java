@@ -14,7 +14,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Entity
-@Table(name = SysConfig.TABLE_NAME)
+@Table(name = SysConfig.TABLE_NAME, schema = "\"user\"")
 @Builder
 @Getter
 public class SysConfig {

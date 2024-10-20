@@ -47,7 +47,6 @@ public class JwtService {
     private Map<String, Object> addClaims(User user) {
         Map<String, Object> userMap = new HashMap<>();
         userMap.put("name", user.getName());
-        userMap.put("age", user.getAge());
         userMap.put("country", user.getCountry());
         userMap.put("email", user.getEmail());
         return userMap;
