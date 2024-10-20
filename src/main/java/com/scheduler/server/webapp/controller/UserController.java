@@ -43,7 +43,7 @@ public class UserController {
         return ResponseEntity.ok(JsonResponse.builder()
                 .status(HttpStatus.ACCEPTED)
                 .message("User list returned")
-                .data(service.getAll()));
+                .data(service.getAll()).build());
     }
 
     @PostMapping("/signup")

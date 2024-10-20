@@ -1,5 +1,8 @@
 package com.scheduler.server.webapp.dto;
 
-public record UserMFADto(Long id, Long userId, String qrImage) {
+import java.sql.Timestamp;
+
+public record UserMFADto(Long id, Long userId, String qrImage, Timestamp createdAt, Timestamp updatedAt,
+        Boolean mfaEnabled) {
 
 }

@@ -69,8 +69,9 @@ public class UserService {
         }
     }
 
-    public List<User> getAll() {
-        return userRepo.findAll();
+    public List<UserDto> getAll() {
+        List<User> users = userRepo.findAll();
+        return UserMapper.INSTANCE.toUserDtoList(users);
     }
 
     public boolean verifyUser(User user) {
