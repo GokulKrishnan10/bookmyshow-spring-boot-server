@@ -1,6 +1,6 @@
 package com.scheduler.server.webapp.enums;
 
-public enum UiRegion {
+public enum Region {
     USA(100),
     AU(200),
     EU(300),
@@ -9,7 +9,7 @@ public enum UiRegion {
 
     int value;
 
-    UiRegion(int value) {
+    Region(int value) {
         this.value = value;
     }
 }

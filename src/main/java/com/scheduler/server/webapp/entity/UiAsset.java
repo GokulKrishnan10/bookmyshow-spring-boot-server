@@ -1,6 +1,6 @@
 package com.scheduler.server.webapp.entity;
 
-import com.scheduler.server.webapp.enums.UiRegion;
+import com.scheduler.server.webapp.enums.Region;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,5 +35,5 @@ public class UiAsset {
 
     @Column(name = "region")
     @Enumerated(EnumType.ORDINAL)
-    private UiRegion region;
+    private Region region;
 }

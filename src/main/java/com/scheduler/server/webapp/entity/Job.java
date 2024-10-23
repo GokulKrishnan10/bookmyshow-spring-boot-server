@@ -3,9 +3,8 @@ package com.scheduler.server.webapp.entity;
 import java.io.Serializable;
 import java.sql.Timestamp;
 
-import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.CurrentTimestamp;
 
-import com.scheduler.server.webapp.enums.JobStatus;
 import com.scheduler.server.webapp.enums.JobType;
 
 import jakarta.persistence.Column;
@@ -45,5 +44,9 @@ public class Job implements Serializable {
 
     @Column(name = "scheduled_at", nullable = false)
     private Timestamp scheduledAt;
+
+    @Column(name = "created_at", nullable = false)
+    @CurrentTimestamp
+    private Timestamp createdAt;
 
 }

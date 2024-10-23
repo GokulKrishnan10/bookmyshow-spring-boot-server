@@ -35,10 +35,8 @@ public class JobComponent {
 
     @Scheduled(fixedRate = 500)
     public void readFromJobTable() {
+
         List<Job> jobs = jobService.getJobByTimeRange();
-        if (!jobs.isEmpty()) {
-            System.out.println("Job list " + jobs.toString() + " executed at " + Timestamp.from(Instant.now()));
-        }
         jobs.forEach(schJob -> {
             executeJob(schJob.getJobName(),
                     getJsonFromString(schJob.getParams()));

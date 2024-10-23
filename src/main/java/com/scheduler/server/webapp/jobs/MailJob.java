@@ -28,9 +28,10 @@ public class MailJob implements ScheduledJob {
         try {
             SimpleMailMessage mailMessage = new SimpleMailMessage();
             mailMessage.setFrom(sender);
-            mailMessage.setTo("gokulphone1010@gmail.com");
+            mailMessage.setTo(params.get("toAddrs").getAsString());
             mailMessage.setText("Spring Boot Mail test");
-            mailMessage.setSubject("This is just a sample mail from the Spring boot App");
+            mailMessage.setCc(params.get("cc").getAsString());
+            mailMessage.setSubject(params.get("subject").getAsString());
             mailSender.send(mailMessage);
         } catch (Exception e) {
             e.printStackTrace();
