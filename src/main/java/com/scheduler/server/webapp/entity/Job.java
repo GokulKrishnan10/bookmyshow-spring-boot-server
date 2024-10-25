@@ -39,7 +39,7 @@ public class Job implements Serializable {
     @Enumerated(EnumType.ORDINAL)
     private JobType jobName;
 
-    @Column(name = "params")
+    @Column(name = "params", columnDefinition = "text")
     private String params;
 
     @Column(name = "scheduled_at", nullable = false)

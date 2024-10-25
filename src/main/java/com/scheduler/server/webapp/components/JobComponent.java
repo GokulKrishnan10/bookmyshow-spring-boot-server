@@ -33,13 +33,17 @@ public class JobComponent {
         this.jobMap = jobMap;
     }
 
-    @Scheduled(fixedRate = 500)
-    public void readFromJobTable() {
+    @Scheduled(fixedRate = 100)
+    public void readFromJobTable() throws Exception {
 
         List<Job> jobs = jobService.getJobByTimeRange();
         jobs.forEach(schJob -> {
-            executeJob(schJob.getJobName(),
-                    getJsonFromString(schJob.getParams()));
+            try {
+                executeJob(schJob.getJobName(),
+                        getJsonFromString(schJob.getParams()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             jobService.deleteById(schJob.getId());
             jobService.insertSuccess(schJob, JobStatus.SUCCESS);
             System.out.println(schJob.getJobName().name() + " executed at " + Timestamp.from(Instant.now()));
@@ -51,7 +55,7 @@ public class JobComponent {
         return this.jobMap.get(jobType);
     }
 
-    private void executeJob(JobType jobName, JsonObject params) {
+    private void executeJob(JobType jobName, JsonObject params) throws Exception {
         ScheduledJob job = getScheduledJob(jobName);
         job.initialize(params);
         String result = job.executeJob();

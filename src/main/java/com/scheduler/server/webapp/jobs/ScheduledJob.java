@@ -6,7 +6,7 @@ import com.scheduler.server.webapp.enums.JobType;
 public interface ScheduledJob {
     void initialize(JsonObject params);
 
-    String executeJob();
+    String executeJob() throws Exception;
 
     JobType getJobType();
 }

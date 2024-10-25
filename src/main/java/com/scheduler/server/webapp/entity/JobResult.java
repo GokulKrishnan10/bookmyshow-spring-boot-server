@@ -18,12 +18,17 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Table;
-
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = JobResult.TABLE_NAME, schema = "\"jobs\"")
 @Builder
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class JobResult {
     public static final String TABLE_NAME = "job_results";
 

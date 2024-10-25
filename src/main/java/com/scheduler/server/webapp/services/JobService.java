@@ -26,7 +26,8 @@ public class JobService {
 
     @Transactional
     public void scheduleJob(Job job) {
-        Job scheduledJob = Job.builder().jobName(job.getJobName()).scheduledAt(job.getScheduledAt()).build();
+        Job scheduledJob = Job.builder().jobName(job.getJobName()).params(job.getParams())
+                .scheduledAt(job.getScheduledAt()).build();
         jobRepository.save(scheduledJob);
     }
 
@@ -40,6 +41,10 @@ public class JobService {
 
     public List<Job> getAll() {
         return jobRepository.findAll();
+    }
+
+    public List<JobResult> getAllAudits() {
+        return jobResultRepository.findAll();
     }
 
     @Transactional

@@ -4,6 +4,8 @@ import java.sql.Timestamp;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.scheduler.server.webapp.enums.Region;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -34,6 +36,9 @@ public class SysConfig {
 
     @Column(name = "comment", nullable = false)
     private String comment;
+
+    @Column(name = "region", nullable = false)
+    private Region region;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
