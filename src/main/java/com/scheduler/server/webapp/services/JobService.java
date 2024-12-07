@@ -9,12 +9,11 @@ import com.scheduler.server.webapp.enums.JobStatus;
 import com.scheduler.server.webapp.repository.JobRepository;
 import com.scheduler.server.webapp.repository.JobResultRepository;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
-import java.time.Duration;
 
 @Service
 public class JobService {
@@ -26,9 +25,7 @@ public class JobService {
 
     @Transactional
     public void scheduleJob(Job job) {
-        Job scheduledJob = Job.builder().jobName(job.getJobName()).params(job.getParams())
-                .scheduledAt(job.getScheduledAt()).build();
-        jobRepository.save(scheduledJob);
+        jobRepository.save(job);
     }
 
     public List<Job> getJobByTimeRange() {
@@ -39,6 +36,10 @@ public class JobService {
         return jobs;
     }
 
+    public void save(Job job) {
+        jobRepository.save(job);
+    }
+
     public List<Job> getAll() {
         return jobRepository.findAll();
     }
@@ -47,12 +48,10 @@ public class JobService {
         return jobResultRepository.findAll();
     }
 
-    @Transactional
     public void deleteById(Long id) {
         jobRepository.deleteById(id);
     }
 
-    @Transactional
     public void insertSuccess(Job job, JobStatus status) {
         JobResult result = JobResult.builder().error("No error").jobStatus(status).jobName(job.getJobName())
                 .scheduledAt(job.getScheduledAt())

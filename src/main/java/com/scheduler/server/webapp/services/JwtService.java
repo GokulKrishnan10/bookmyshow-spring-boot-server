@@ -6,6 +6,8 @@ import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.function.Function;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -36,8 +38,9 @@ public class JwtService {
         Instant expiration = issuedAt.plus(3, ChronoUnit.DAYS);
 
         String token = Jwts.builder().issuer("GokulaKrishnanE")
-                .issuedAt(Date.from(issuedAt))
+                .setSubject(user.getEmail())
                 .claims(map)
+                .issuedAt(Date.from(issuedAt))
                 .expiration(Date.from(expiration))
                 .signWith(Keys.hmacShaKeyFor(readKeyFile(privateKeyPath).getBytes()))
                 .compact();
@@ -46,10 +49,22 @@ public class JwtService {
 
     private Map<String, Object> addClaims(User user) {
         Map<String, Object> userMap = new HashMap<>();
-        userMap.put("name", user.getName());
-        userMap.put("country", user.getCountry());
         userMap.put("email", user.getEmail());
+        userMap.put("roles", user.getAuthorities());
         return userMap;
+    }
+
+    public String extractUserName(String token) {
+        return "";
+    }
+
+    // private <T> T extractClaim(String token, Function<Claims, T> claimFunction) {
+    // final Claims claims = null;
+    // return;
+    // }
+
+    private Claims getClaims(String token) {
+        return Jwts.parser().setSigningKey(readKeyFile(publicKeyPath)).build().parseClaimsJws(token).getPayload();
     }
 
     private String readKeyFile(String path) {
@@ -67,7 +82,7 @@ public class JwtService {
         return expiration != null && expiration.before(new Date());
     }
 
-    public boolean verifyJwtToken(String token) {
+    public boolean verifyJwtToken(String token, User user) {
         Claims claims = Jwts.parser()
                 .verifyWith(Keys.hmacShaKeyFor(readKeyFile(publicKeyPath).getBytes()))
                 .build()
@@ -76,6 +91,6 @@ public class JwtService {
         if (!checkExpiration(expiration)) {
             return false;
         }
-        return true;
+        return claims.getSubject().equals(user.getEmail());
     }
 }

@@ -3,6 +3,7 @@ package com.scheduler.server.webapp.entity;
 import java.sql.Timestamp;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import com.scheduler.server.webapp.enums.Region;
 
@@ -16,7 +17,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Entity
-@Table(name = SysConfig.TABLE_NAME, schema = "\"user\"")
+@Table(name = SysConfig.TABLE_NAME, schema = "\"app_users\"")
 @Builder
 @Getter
 public class SysConfig {
@@ -34,7 +35,7 @@ public class SysConfig {
     @Column(name = "encrypted", columnDefinition = "boolean default false")
     private Boolean encrypted;
 
-    @Column(name = "comment", nullable = false)
+    @Column(name = "comment", nullable = false, columnDefinition = "text default 'No comments'")
     private String comment;
 
     @Column(name = "region", nullable = false)
@@ -43,5 +44,9 @@ public class SysConfig {
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
     private Timestamp createdAt;
+
+    @Column(name = "modified_at", nullable = false)
+    @UpdateTimestamp
+    private Timestamp updatedAt;
 
 }

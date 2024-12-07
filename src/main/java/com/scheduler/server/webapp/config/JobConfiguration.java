@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.scheduler.server.webapp.enums.JobType;
-import com.scheduler.server.webapp.jobs.ScheduledJob;
+import com.scheduler.server.webapp.jobs.defns.ScheduledJob;
 
 import java.util.HashMap;
 import java.util.Map;

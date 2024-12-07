@@ -10,11 +10,11 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Entity
-@Table(name = AppJob.TABLE_NAME, schema = "\"jobs\"")
+@Table(name = JobMapping.TABLE_NAME, schema = "\"jobs\"")
 @Builder
 @Getter
-public class AppJob {
-    public final static String TABLE_NAME = "app_jobs";
+public class JobMapping {
+    public final static String TABLE_NAME = "job_mappings";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

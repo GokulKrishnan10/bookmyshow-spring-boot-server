@@ -1,7 +1,7 @@
 package com.scheduler.server.webapp.enums;
 
 public enum Region {
-    USA(100),
+    US(100),
     AU(200),
     EU(300),
     ALL(400),

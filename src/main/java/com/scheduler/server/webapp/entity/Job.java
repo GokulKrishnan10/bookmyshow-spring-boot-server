@@ -6,6 +6,7 @@ import java.sql.Timestamp;
 import org.hibernate.annotations.CurrentTimestamp;
 
 import com.scheduler.server.webapp.enums.JobType;
+import com.scheduler.server.webapp.enums.Microservices;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,14 +21,17 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = Job.TABLE_NAME, schema = "\"jobs\"", indexes = {
-        @Index(name = "scheduled_at_index", columnList = "scheduled_at") })
+        @Index(name = "scheduled_at_index", columnList = "scheduled_at"),
+        @Index(name = "job_id_index", columnList = "id") })
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
+@Setter
 public class Job implements Serializable {
     public static final String TABLE_NAME = "jobs";
 
@@ -44,6 +48,16 @@ public class Job implements Serializable {
 
     @Column(name = "scheduled_at", nullable = false)
     private Timestamp scheduledAt;
+
+    @Column(name = "number_of_failures")
+    private Integer numberOfFailures;
+
+    @Column(name = "is_microservice_based", columnDefinition = "boolean default false")
+    private Boolean isMicroserviceBased;
+
+    @Column(name = "microservice_name")
+    @Enumerated(EnumType.ORDINAL)
+    private Microservices microserviceName;
 
     @Column(name = "created_at", nullable = false)
     @CurrentTimestamp

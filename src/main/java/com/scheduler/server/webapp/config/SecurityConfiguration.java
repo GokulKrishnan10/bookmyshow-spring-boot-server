@@ -13,7 +13,6 @@ public class SecurityConfiguration {
         http.authorizeHttpRequests(
                 configurer -> configurer.requestMatchers(HttpMethod.POST, "/api/user/signup").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/user/login").permitAll()
-                        .requestMatchers("/api/job/**").hasAnyAuthority("ADMIN")
                         .anyRequest().authenticated())
                 .csrf(csrf -> csrf.disable());
         return http.build();

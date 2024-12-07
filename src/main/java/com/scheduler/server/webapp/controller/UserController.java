@@ -2,6 +2,8 @@ package com.scheduler.server.webapp.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.scheduler.server.webapp.entity.User;
 import com.scheduler.server.webapp.exception.AppException;
 import com.scheduler.server.webapp.response.JsonResponse;
@@ -9,6 +11,7 @@ import com.scheduler.server.webapp.services.JwtService;
 import com.scheduler.server.webapp.services.UserService;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 import jakarta.transaction.Transactional;
 
@@ -53,6 +56,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(JsonResponse.builder()
                 .data(service.saveCustomer(entity)).message("User created successfully").status(HttpStatus.OK)
                 .build());
+
     }
 
     @PostMapping("/login")
@@ -67,10 +71,13 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(JsonResponse.builder().data("success"));
     }
 
-    @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity<Object> deleteCustomerUsingMail(@RequestParam String mail) throws AppException {
-        return ResponseEntity.ok(service.deleteUserByEmail(mail));
+    @DeleteMapping("/")
+    public ResponseEntity<Object> deleteCustomerUsingMail(@RequestBody String body) throws AppException {
+
+        JsonObject json = new Gson().fromJson(body, JsonObject.class);
+        String email = json.get("email").getAsString();
+        return ResponseEntity.ok(service.deleteUserByEmail(email));
     }
 
     @PutMapping("/{id}")

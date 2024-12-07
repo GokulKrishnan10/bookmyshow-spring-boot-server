@@ -1,18 +1,9 @@
 package com.scheduler.server.webapp.jobs;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 
-import org.apache.tomcat.util.http.fileupload.FileUtils;
-import org.apache.tomcat.util.http.fileupload.IOUtils;
-import org.eclipse.angus.mail.handlers.multipart_mixed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties.Io;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -20,26 +11,17 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Component;
 
-import com.google.gson.JsonObject;
 import com.scheduler.server.webapp.enums.JobType;
-import com.scheduler.server.webapp.exception.AppException;
+import com.scheduler.server.webapp.jobs.defns.ScheduledJob;
 
 import jakarta.mail.Message;
 import jakarta.mail.internet.InternetAddress;
-import jakarta.mail.internet.MimeUtility;
 
 @Component
-public class MailJob implements ScheduledJob {
-
-    JsonObject params;
+public class MailJob extends ScheduledJob {
 
     @Value("${spring.mail.username}")
     private String sender;
-
-    @Override
-    public void initialize(JsonObject params) {
-        this.params = params;
-    }
 
     private JavaMailSender mailSender;
 
@@ -50,7 +32,6 @@ public class MailJob implements ScheduledJob {
 
     private void sendSimpleMail() throws Exception {
         Boolean hasAttachMent = Boolean.valueOf(params.get("has_attachment").getAsString());
-        System.out.println("Mail has attachment or not " + hasAttachMent);
         if (hasAttachMent) {
             this.sendMailWithAttachment();
             return;
@@ -79,8 +60,8 @@ public class MailJob implements ScheduledJob {
             FileSystemResource resource = new FileSystemResource(new File(this.params.get("fileName").getAsString()));
             MimeMessageHelper helper = new MimeMessageHelper(mimemessage, true);
             if (resource.exists()) {
-                helper.addAttachment("job-audits.csv", resource);
-                helper.setText("", true);
+                helper.addAttachment(this.params.get("fileName").getAsString(), resource);
+                helper.setText(this.params.get("content").getAsString(), true);
             } else {
                 System.out.println("File Not Found");
                 return;

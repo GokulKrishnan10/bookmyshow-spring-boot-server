@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.scheduler.server.webapp.entity.AppJob;
+import com.scheduler.server.webapp.entity.JobMapping;
 import com.scheduler.server.webapp.entity.Job;
 import com.scheduler.server.webapp.services.JobMapperService;
 
@@ -16,7 +16,7 @@ public class JobController {
     JobMapperService service;
 
     @PostMapping("/insert")
-    public ResponseEntity<Object> insertJobMapping(AppJob appJob) {
+    public ResponseEntity<Object> insertJobMapping(JobMapping appJob) {
         service.insertMapper(appJob);
         return ResponseEntity.ok("success");
     }

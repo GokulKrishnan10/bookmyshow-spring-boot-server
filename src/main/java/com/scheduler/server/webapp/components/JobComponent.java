@@ -1,11 +1,10 @@
 package com.scheduler.server.webapp.components;
 
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +14,7 @@ import com.scheduler.server.webapp.entity.Job;
 import com.scheduler.server.webapp.enums.JobStatus;
 import com.scheduler.server.webapp.enums.JobType;
 import com.scheduler.server.webapp.exception.AppException;
-import com.scheduler.server.webapp.jobs.ScheduledJob;
+import com.scheduler.server.webapp.jobs.defns.ScheduledJob;
 import com.scheduler.server.webapp.services.JobService;
 
 import java.util.Map;
@@ -34,19 +33,22 @@ public class JobComponent {
     }
 
     @Scheduled(fixedRate = 100)
+    @Async
     public void readFromJobTable() throws Exception {
-
         List<Job> jobs = jobService.getJobByTimeRange();
         jobs.forEach(schJob -> {
             try {
+                // if (schJob.getIsMicroserviceBased()) {
+
+                // } else {
                 executeJob(schJob.getJobName(),
-                        getJsonFromString(schJob.getParams()));
+                        getJsonFromString(schJob.getParams()), schJob);
+                // }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            jobService.deleteById(schJob.getId());
-            jobService.insertSuccess(schJob, JobStatus.SUCCESS);
-            System.out.println(schJob.getJobName().name() + " executed at " + Timestamp.from(Instant.now()));
+
         });
 
     }
@@ -55,11 +57,23 @@ public class JobComponent {
         return this.jobMap.get(jobType);
     }
 
-    private void executeJob(JobType jobName, JsonObject params) throws Exception {
+    private void executeJob(JobType jobName, JsonObject params, Job schJob) throws Exception {
         ScheduledJob job = getScheduledJob(jobName);
-        job.initialize(params);
-        String result = job.executeJob();
-        System.out.println("Result " + result);
+        // job.initialize(params);
+        // String result = job.executeJob();
+        // job.recurringSchedule();
+        // System.out.println("Result " + result);
+        boolean lock = job.lockTheJob(schJob);
+
+        if (lock) {
+            job.initialize(params);
+            job.executeJob();
+            job.recurringSchedule();
+            jobService.deleteById(schJob.getId());
+            jobService.insertSuccess(schJob, JobStatus.SUCCESS);
+            job.removeLock(schJob.getId());
+        }
+
     }
 
     private JsonObject getJsonFromString(String params) {

@@ -2,6 +2,7 @@ package com.scheduler.server.webapp.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,8 @@ import com.scheduler.server.webapp.exception.AppException;
 import com.scheduler.server.webapp.repository.UserRepository;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+
 import jakarta.transaction.Transactional;
 
 import com.scheduler.server.webapp.dto.UserDto;
@@ -36,13 +39,14 @@ public class UserService {
                 .phoneNumber(entity.getPhoneNumber())
                 .country(entity.getCountry())
                 .email(entity.getEmail())
-                .isEnabled(true)
-                .isLocked(false)
-                .isExpired(false)
                 .role(entity.getRole())
                 .password(getHashedPassword(entity.getPassword())).build();
         userRepo.save(user);
         return user.getId().toString();
+    }
+
+    public User getUserByUserName(String mail) {
+        return userRepo.findByEmail(mail).get(0);
     }
 
     @Transactional

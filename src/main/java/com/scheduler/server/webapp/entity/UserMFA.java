@@ -8,7 +8,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 
 @Entity
-@Table(name = UserMFA.TABLE_NAME, schema = "\"user\"")
+@Table(name = UserMFA.TABLE_NAME, schema = "\"app_users\"")
 @Builder
 public class UserMFA {
     public static final String TABLE_NAME = "users_mfa";

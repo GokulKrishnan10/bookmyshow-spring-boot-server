@@ -1,5 +1,10 @@
 package com.scheduler.server.webapp.entity;
 
+import java.sql.Timestamp;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import com.scheduler.server.webapp.enums.Region;
 
 import jakarta.persistence.Column;
@@ -14,7 +19,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 @Entity
-@Table(name = UiAsset.TABLE_NAME, schema = "\"user\"")
+@Table(name = UiAsset.TABLE_NAME, schema = "\"app_users\"")
 @Builder
 @Getter
 public class UiAsset {
@@ -36,4 +41,12 @@ public class UiAsset {
     @Column(name = "region")
     @Enumerated(EnumType.ORDINAL)
     private Region region;
+
+    @Column(name = "created_at")
+    @CreationTimestamp
+    private Timestamp createdAt;
+
+    @Column(name = "modified_at")
+    @UpdateTimestamp
+    private Timestamp modifiedAt;
 }
