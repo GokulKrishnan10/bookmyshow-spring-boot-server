@@ -1,8 +1,6 @@
 package com.scheduler.server.webapp.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,8 +9,8 @@ import com.scheduler.server.webapp.entity.User;
 import com.scheduler.server.webapp.exception.AppException;
 import com.scheduler.server.webapp.repository.UserRepository;
 
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
+import java.util.List;
+import java.util.Optional;
 
 import jakarta.transaction.Transactional;
 
@@ -24,7 +22,6 @@ public class UserService {
     private UserRepository userRepo;
     private JwtService service;
 
-    @Autowired
     public UserService(UserRepository userRepository, JwtService jwtService) {
         this.userRepo = userRepository;
         this.service = jwtService;

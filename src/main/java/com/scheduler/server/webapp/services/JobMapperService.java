@@ -4,12 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 
 import com.scheduler.server.webapp.entity.JobMapping;
-import com.scheduler.server.webapp.repository.AppJobRepository;
+import com.scheduler.server.webapp.repository.JobMappingRepository;
 import com.scheduler.server.webapp.exception.AppException;
 
 public class JobMapperService {
     @Autowired
-    AppJobRepository appJobRepository;
+    JobMappingRepository appJobRepository;
 
     public void insertMapper(JobMapping appJob) {
         if (!isJobPresent("com.scheduler.server.webapp.jobs" + appJob.getMethodMapping())) {

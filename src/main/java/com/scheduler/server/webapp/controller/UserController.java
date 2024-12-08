@@ -7,11 +7,7 @@ import com.google.gson.JsonObject;
 import com.scheduler.server.webapp.entity.User;
 import com.scheduler.server.webapp.exception.AppException;
 import com.scheduler.server.webapp.response.JsonResponse;
-import com.scheduler.server.webapp.services.JwtService;
 import com.scheduler.server.webapp.services.UserService;
-
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 import jakarta.transaction.Transactional;
 
@@ -32,14 +28,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class UserController {
     @Autowired
     private UserService service;
-    @Autowired
-    private JwtService jwtService;
-
-    // Using path variable like api.example.com/gokul/name
-    // @RequestMapping("/gokul/{id}")
-    // public String gokul(@PathVariable("id") String id) {
-    // return "Hello gokul your message is " + id;
-    // }
 
     @GetMapping("/all")
     public ResponseEntity<Object> getMethodName() {
@@ -49,8 +37,7 @@ public class UserController {
                 .data(service.getAll()).build());
     }
 
-    @PostMapping("/signup")
-    @Transactional
+    @PostMapping
     public ResponseEntity<Object> createUser(@RequestBody User entity) {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(JsonResponse.builder()
@@ -66,13 +53,12 @@ public class UserController {
         return ResponseEntity.ok("success");
     }
 
-    @GetMapping("/{id}")
+    @GetMapping
     public ResponseEntity<Object> getMethodName(@RequestParam Long id) {
         return ResponseEntity.status(HttpStatus.OK).body(JsonResponse.builder().data("success"));
     }
 
-    @Transactional
-    @DeleteMapping("/")
+    @DeleteMapping
     public ResponseEntity<Object> deleteCustomerUsingMail(@RequestBody String body) throws AppException {
 
         JsonObject json = new Gson().fromJson(body, JsonObject.class);
@@ -80,7 +66,7 @@ public class UserController {
         return ResponseEntity.ok(service.deleteUserByEmail(email));
     }
 
-    @PutMapping("/{id}")
+    @PutMapping
     @Transactional
     public ResponseEntity<Object> putMethodName(@PathVariable String id, @RequestBody User entity) {
         // TODO: process PUT request

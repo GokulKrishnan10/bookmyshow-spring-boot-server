@@ -41,7 +41,7 @@ public class JwtController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/verify")
+    @GetMapping
     public String getMethodName(@RequestHeader MultiValueMap<String, String> headers) {
         headers.forEach((key, value) -> {
             System.out.println(key + " and value is " + value);
@@ -52,7 +52,8 @@ public class JwtController {
     }
 
     // Using Request Param api.example.com/delete?id=10
-    @DeleteMapping("/delete")
+    @SuppressWarnings("unused")
+    @DeleteMapping
     @Transactional
     public ResponseEntity<Object> deleteUser(@RequestParam Long id,
             @RequestHeader MultiValueMap<String, String> headers) throws AppException {

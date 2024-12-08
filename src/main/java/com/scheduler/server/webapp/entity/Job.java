@@ -53,7 +53,8 @@ public class Job implements Serializable {
     private Integer numberOfFailures;
 
     @Column(name = "is_microservice_based", columnDefinition = "boolean default false")
-    private Boolean isMicroserviceBased;
+    @Builder.Default
+    private Boolean isMicroserviceBased = false;
 
     @Column(name = "microservice_name")
     @Enumerated(EnumType.ORDINAL)
