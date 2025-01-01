@@ -5,13 +5,15 @@ public enum JobType {
     SEND_EMAIL(20),
     SEND_SMS(30),
     SEND_WHATSAPP_NOTIFICATION(40),
-    EXPORT_JOBS_AUDIT_TO_CSV(50, true),
+    EXPORT_JOBS_AUDIT_TO_CSV(50, true, JobFrequency.MONTHLY),
     REPORT_JOBS_TO_MAIL(60),
-    SEND_MONTHLY_REPORT(70, true),
-    RUN_DAILY_TESTS(80, true); // this is supposed to be executed daily at 12am IST
+    SEND_MONTHLY_REPORT(70, true, JobFrequency.MONTHLY),
+    RUN_DAILY_TESTS(80, true, JobFrequency.DAILY), // this is supposed to be executed daily at 12am IST
+    UPDATE_JWT_SIGNING_KEYS(90, true, JobFrequency.WEEKLY);
 
     int value;
     boolean isRecurring = false;
+    JobFrequency frequency = JobFrequency.NONE;
 
     JobType(int value) {
         this.value = value;
@@ -22,8 +24,17 @@ public enum JobType {
         this.isRecurring = isRecurring;
     }
 
+    JobType(int value, boolean isRecurring, JobFrequency frequency) {
+        this(value, isRecurring);
+        this.frequency = frequency;
+    }
+
     public boolean isRecurring() {
         return this.isRecurring;
+    }
+
+    public JobFrequency getFrequency() {
+        return this.frequency;
     }
 
 }

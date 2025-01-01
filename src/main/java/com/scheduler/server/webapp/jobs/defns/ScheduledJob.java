@@ -74,8 +74,11 @@ public abstract class ScheduledJob {
         if (jobType.isRecurring()) {
             String jsonString = this.params.toString();
             Job job = Job.builder().jobName(jobType).params(jsonString)
-                    .scheduledAt(java.sql.Timestamp.from(Instant.now().plus(Duration.ofDays(30)))).build();
+                    .scheduledAt(java.sql.Timestamp
+                            .from(Instant.now().plus(Duration.ofDays(jobType.getFrequency().getDays()))))
+                    .build();
             jobService.scheduleJob(job);
         }
     }
+
 }
