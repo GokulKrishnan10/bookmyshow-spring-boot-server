@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.scheduler.server.webapp.enums.UserRole;
 
 import jakarta.persistence.*;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

@@ -34,7 +34,7 @@ public class SysConfig {
     @Column(name = "config_name", nullable = false, unique = true)
     private String configName;
 
-    @Column(name = "config_value", nullable = false)
+    @Column(name = "config_value", nullable = false, columnDefinition = "text")
     private String configValue;
 
     @Column(name = "is_enabled", columnDefinition = "boolean default true")
