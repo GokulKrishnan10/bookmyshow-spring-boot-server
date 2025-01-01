@@ -32,7 +32,7 @@ public class RowLock implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "job_id")
+    @Column(name = "job_id", unique = true)
     private Long jobId;
 
     @Column(name = "created_at", nullable = false, updatable = false)

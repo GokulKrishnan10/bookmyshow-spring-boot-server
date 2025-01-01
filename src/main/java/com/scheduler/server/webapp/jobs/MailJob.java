@@ -36,17 +36,13 @@ public class MailJob extends ScheduledJob {
             this.sendMailWithAttachment();
             return;
         }
-        try {
-            SimpleMailMessage mailMessage = new SimpleMailMessage();
-            mailMessage.setFrom(sender);
-            mailMessage.setTo(params.get("toAddrs").getAsString());
-            mailMessage.setText(params.get("content").getAsString());
-            mailMessage.setCc(params.get("cc").getAsString());
-            mailMessage.setSubject(params.get("subject").getAsString());
-            mailSender.send(mailMessage);
-        } catch (Exception e) {
-            throw new Exception(e.getMessage());
-        }
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setFrom(sender);
+        mailMessage.setTo(params.get("toAddrs").getAsString());
+        mailMessage.setText(params.get("content").getAsString());
+        mailMessage.setCc(params.get("cc").getAsString());
+        mailMessage.setSubject(params.get("subject").getAsString());
+        mailSender.send(mailMessage);
     }
 
     public void sendMailWithAttachment() {
@@ -69,11 +65,7 @@ public class MailJob extends ScheduledJob {
 
         };
 
-        try {
-            mailSender.send(preparator);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        mailSender.send(preparator);
     }
 
     @Override

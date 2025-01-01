@@ -47,7 +47,7 @@ public class JobResult {
     @Column(name = "scheduled_at", nullable = false)
     private Timestamp scheduledAt;
 
-    @Column(name = "error", nullable = false)
+    @Column(name = "error", nullable = false, columnDefinition = "text")
     private String error;
 
     @Column(name = "status", nullable = false)

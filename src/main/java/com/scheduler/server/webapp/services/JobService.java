@@ -59,4 +59,12 @@ public class JobService {
                 .executedAt(Timestamp.from(Instant.now())).build();
         jobResultRepository.save(result);
     }
+
+    public void insertFailedStatus(Job job, String exString) {
+        JobResult result = JobResult.builder().error(exString).jobStatus(JobStatus.FAILED).jobName(job.getJobName())
+                .scheduledAt(job.getScheduledAt())
+                .executionTime("null")
+                .executedAt(Timestamp.from(Instant.now())).build();
+        jobResultRepository.save(result);
+    }
 }

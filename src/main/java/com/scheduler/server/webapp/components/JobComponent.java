@@ -67,10 +67,16 @@ public class JobComponent {
 
         if (lock) {
             job.initialize(params);
-            job.executeJob();
+            System.out.println("Job is being executed " + job.getJobType().toString());
+            job.runTask();
             job.recurringSchedule();
             jobService.deleteById(schJob.getId());
-            jobService.insertSuccess(schJob, JobStatus.SUCCESS);
+            if (job.getJobStatus().compareTo(JobStatus.FAILED) == 0) {
+                jobService.insertFailedStatus(schJob, job.getException());
+            } else {
+                jobService.insertSuccess(schJob, JobStatus.SUCCESS);
+            }
+
             job.removeLock(schJob.getId());
         }
 

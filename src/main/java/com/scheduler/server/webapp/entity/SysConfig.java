@@ -32,6 +32,10 @@ public class SysConfig {
     @Column(name = "config_value", nullable = false)
     private String configValue;
 
+    @Column(name = "is_enabled", columnDefinition = "boolean default true")
+    @Builder.Default
+    private Boolean isEnabled = false;
+
     @Column(name = "encrypted", columnDefinition = "boolean default false")
     private Boolean encrypted;
 

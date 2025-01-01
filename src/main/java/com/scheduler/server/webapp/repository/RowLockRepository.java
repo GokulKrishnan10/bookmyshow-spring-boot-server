@@ -17,7 +17,7 @@ public interface RowLockRepository extends JpaRepository<RowLock, Long> {
     // List<SysConfig> findById(Long id);
 
     @Modifying
-    @Query(value = "insert into transactions.row_locks(job_id,created_at) values(?1,now())", nativeQuery = true)
+    @Query(value = "insert into transactions.row_locks(job_id,created_at) values(?1,now()) on conflict(job_id) do nothing", nativeQuery = true)
     void lockRecord(Long jobId);
 
     List<RowLock> findAll();

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonObject;
 import com.scheduler.server.webapp.entity.Job;
+import com.scheduler.server.webapp.enums.JobStatus;
 import com.scheduler.server.webapp.enums.JobType;
 import com.scheduler.server.webapp.services.JobService;
 import com.scheduler.server.webapp.services.RowLockService;
@@ -18,6 +19,10 @@ public abstract class ScheduledJob {
     @Autowired
     JobService jobService;
 
+    private String exceptionMessage;
+
+    private JobStatus status = JobStatus.SUCCESS;
+
     @Autowired
     RowLockService rowLockService;
 
@@ -25,6 +30,23 @@ public abstract class ScheduledJob {
 
     public void initialize(JsonObject params) {
         this.params = params;
+    }
+
+    public JobStatus getJobStatus() {
+        return this.status;
+    }
+
+    public String getException() {
+        return this.exceptionMessage;
+    }
+
+    public void runTask() {
+        try {
+            this.executeJob();
+        } catch (Exception exception) {
+            this.exceptionMessage = exception.getMessage();
+            this.status = JobStatus.FAILED;
+        }
     }
 
     abstract public String executeJob() throws Exception;
