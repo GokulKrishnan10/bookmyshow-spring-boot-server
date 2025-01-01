@@ -9,15 +9,20 @@ import com.scheduler.server.webapp.enums.Region;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
 
 @Entity
-@Table(name = SysConfig.TABLE_NAME, schema = "\"app_users\"")
+@Table(name = SysConfig.TABLE_NAME, schema = "\"app_users\"", indexes = {
+        @Index(name = "", columnList = "type,is_enabled")
+})
 @Builder
 @Getter
 public class SysConfig {
@@ -26,7 +31,7 @@ public class SysConfig {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "config_name", nullable = false)
+    @Column(name = "config_name", nullable = false, unique = true)
     private String configName;
 
     @Column(name = "config_value", nullable = false)
@@ -34,15 +39,19 @@ public class SysConfig {
 
     @Column(name = "is_enabled", columnDefinition = "boolean default true")
     @Builder.Default
-    private Boolean isEnabled = false;
+    private Boolean isEnabled = true;
 
     @Column(name = "encrypted", columnDefinition = "boolean default false")
     private Boolean encrypted;
+
+    @Column(name = "type")
+    private String type;
 
     @Column(name = "comment", nullable = false, columnDefinition = "text default 'No comments'")
     private String comment;
 
     @Column(name = "region", nullable = false)
+    @Enumerated(EnumType.ORDINAL)
     private Region region;
 
     @Column(name = "created_at", nullable = false, updatable = false)
