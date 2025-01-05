@@ -8,10 +8,9 @@ import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonObject;
 import com.scheduler.server.webapp.entity.Job;
-import com.scheduler.server.webapp.enums.JobStatus;
 import com.scheduler.server.webapp.enums.JobType;
 import com.scheduler.server.webapp.services.JobService;
-import com.scheduler.server.webapp.services.RowLockService;
+import com.scheduler.server.webapp.services.LockService;
 
 @Component
 public abstract class ScheduledJob {
@@ -19,33 +18,29 @@ public abstract class ScheduledJob {
     @Autowired
     JobService jobService;
 
-    private String exceptionMessage;
-
-    private JobStatus status = JobStatus.SUCCESS;
-
     @Autowired
-    RowLockService rowLockService;
+    LockService lockService;
 
     protected JsonObject params;
 
-    public void initialize(JsonObject params) {
+    public synchronized void initialize(JsonObject params) {
         this.params = params;
     }
 
-    public JobStatus getJobStatus() {
-        return this.status;
+    public synchronized JsonObject getParams() {
+        return this.params;
     }
 
-    public String getException() {
-        return this.exceptionMessage;
-    }
-
-    public void runTask() {
+    public void runTask(Job schJob) {
         try {
             this.executeJob();
+
         } catch (Exception exception) {
-            this.exceptionMessage = exception.getMessage();
-            this.status = JobStatus.FAILED;
+            jobService.insertFailedStatus(schJob, exception.getMessage());
+        } finally {
+            jobService.insertSuccess(schJob);
+            this.removeLock(schJob.getId());
+            jobService.deleteJob(schJob.getId());
         }
     }
 
@@ -54,25 +49,17 @@ public abstract class ScheduledJob {
     abstract public JobType getJobType();
 
     public boolean lockTheJob(Job job) {
-        if (this.checkIfLocked(job.getId())) {
-            return false;
-        }
-        rowLockService.lockJob(job);
-        return true;
+        return lockService.acquireLock(("job-" + job.getId()), "locked", 15);
     }
 
     public void removeLock(Long id) {
-        rowLockService.removeLock(id);
-    }
-
-    public boolean checkIfLocked(Long id) {
-        return rowLockService.checkIfLocked(id);
+        lockService.releaseLock("job-" + id);
     }
 
     public void recurringSchedule() {
         JobType jobType = this.getJobType();
         if (jobType.isRecurring()) {
-            String jsonString = this.params.toString();
+            String jsonString = this.getParams().toString();
             Job job = Job.builder().jobName(jobType).params(jsonString)
                     .scheduledAt(java.sql.Timestamp
                             .from(Instant.now().plus(Duration.ofDays(jobType.getFrequency().getDays()))))

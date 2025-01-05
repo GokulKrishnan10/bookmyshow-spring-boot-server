@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 
 import org.hibernate.annotations.CurrentTimestamp;
 
+import com.scheduler.server.webapp.enums.JobStatus;
 import com.scheduler.server.webapp.enums.JobType;
 import com.scheduler.server.webapp.enums.Microservices;
 
@@ -46,6 +47,11 @@ public class Job implements Serializable {
 
     @Column(name = "params", columnDefinition = "text")
     private String params;
+
+    @Column(name = "status", nullable = false, columnDefinition = "text default 'PENDING'")
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    private JobStatus status = JobStatus.PENDING;
 
     @Column(name = "scheduled_at", nullable = false)
     private Timestamp scheduledAt;

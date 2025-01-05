@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class JobService {
@@ -48,12 +49,25 @@ public class JobService {
         return jobResultRepository.findAll();
     }
 
-    public void deleteById(Long id) {
+    @Transactional
+    public void saveStatus(Long id, JobStatus status) {
+        jobRepository.lockRecord(id);
+        jobRepository.updateJobStatus(status, id);
+    }
+
+    @Transactional
+    public void deleteJob(Long id) {
+        jobRepository.lockRecord(id);
         jobRepository.deleteById(id);
     }
 
-    public void insertSuccess(Job job, JobStatus status) {
-        JobResult result = JobResult.builder().error("No error").jobStatus(status).jobName(job.getJobName())
+    @Transactional
+    public void deleteCompletedJobs() {
+        jobRepository.deleteAllSuccessJobs();
+    }
+
+    public void insertSuccess(Job job) {
+        JobResult result = JobResult.builder().error("No error").jobStatus(JobStatus.SUCCESS).jobName(job.getJobName())
                 .scheduledAt(job.getScheduledAt())
                 .executionTime("null")
                 .executedAt(Timestamp.from(Instant.now())).build();

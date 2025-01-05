@@ -11,8 +11,10 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.stereotype.Component;
 
+import com.scheduler.server.webapp.enums.JobStatus;
 import com.scheduler.server.webapp.enums.JobType;
 import com.scheduler.server.webapp.jobs.defns.ScheduledJob;
+import com.scheduler.server.webapp.services.JobService;
 
 import jakarta.mail.Message;
 import jakarta.mail.internet.InternetAddress;
@@ -24,6 +26,9 @@ public class MailJob extends ScheduledJob {
     private String sender;
 
     private JavaMailSender mailSender;
+
+    @Autowired
+    private JobService service;
 
     @Autowired
     public MailJob(JavaMailSender mailSender) {
@@ -48,16 +53,17 @@ public class MailJob extends ScheduledJob {
     public void sendMailWithAttachment() {
         MimeMessagePreparator preparator = mimemessage -> {
             mimemessage.setRecipient(Message.RecipientType.TO,
-                    new InternetAddress(this.params.get("toAddrs").getAsString()));
+                    new InternetAddress(this.getParams().get("toAddrs").getAsString()));
             mimemessage.setFrom(this.sender);
-            mimemessage.setText(this.params.get("content").getAsString());
-            mimemessage.setSubject(this.params.get("subject").getAsString());
+            mimemessage.setText(this.getParams().get("content").getAsString());
+            mimemessage.setSubject(this.getParams().get("subject").getAsString());
 
-            FileSystemResource resource = new FileSystemResource(new File(this.params.get("fileName").getAsString()));
+            FileSystemResource resource = new FileSystemResource(
+                    new File(this.getParams().get("fileName").getAsString()));
             MimeMessageHelper helper = new MimeMessageHelper(mimemessage, true);
             if (resource.exists()) {
-                helper.addAttachment(this.params.get("fileName").getAsString(), resource);
-                helper.setText(this.params.get("content").getAsString(), true);
+                helper.addAttachment(this.getParams().get("fileName").getAsString(), resource);
+                helper.setText(this.getParams().get("content").getAsString(), true);
             } else {
                 System.out.println("File Not Found");
                 return;
@@ -70,7 +76,10 @@ public class MailJob extends ScheduledJob {
 
     @Override
     public String executeJob() throws Exception {
+        System.out.println("Mail Send successfully " + this.getParams().get("jobId").getAsLong());
         sendSimpleMail();
+        System.out.println("Mail Send successfully " + this.getParams().get("jobId").getAsLong());
+        this.service.deleteJob(this.getParams().get("jobId").getAsLong());
         return "Mail Send successfully";
     }
 

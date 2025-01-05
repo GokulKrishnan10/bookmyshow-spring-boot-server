@@ -36,14 +36,11 @@ public class JobComponent {
     @Async
     public void readFromJobTable() throws Exception {
         List<Job> jobs = jobService.getJobByTimeRange();
+
         jobs.forEach(schJob -> {
             try {
-                // if (schJob.getIsMicroserviceBased()) {
-
-                // } else {
                 executeJob(schJob.getJobName(),
                         getJsonFromString(schJob.getParams()), schJob);
-                // }
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -59,25 +56,16 @@ public class JobComponent {
 
     private void executeJob(JobType jobName, JsonObject params, Job schJob) throws Exception {
         ScheduledJob job = getScheduledJob(jobName);
-        // job.initialize(params);
-        // String result = job.executeJob();
-        // job.recurringSchedule();
-        // System.out.println("Result " + result);
         boolean lock = job.lockTheJob(schJob);
 
         if (lock) {
             job.initialize(params);
-            System.out.println("Job is being executed " + job.getJobType().toString());
-            job.runTask();
+            jobService.saveStatus(schJob.getId(), JobStatus.RUNNING);
+            System.out.println(
+                    "Job is being executed " + job.getJobType().toString() + " and job id is " + schJob.getId());
+            job.runTask(schJob);
+            jobService.saveStatus(schJob.getId(), JobStatus.SUCCESS);
             job.recurringSchedule();
-            jobService.deleteById(schJob.getId());
-            if (job.getJobStatus().compareTo(JobStatus.FAILED) == 0) {
-                jobService.insertFailedStatus(schJob, job.getException());
-            } else {
-                jobService.insertSuccess(schJob, JobStatus.SUCCESS);
-            }
-
-            job.removeLock(schJob.getId());
         }
 
     }

@@ -16,9 +16,9 @@ public class SendSMSJob extends ScheduledJob {
         final String ACCOUNT_SID = "AC7ec418b9125c0fc5a99214f0bf220400";
         final String AUTH_TOKEN = "2a1f97fec38d1e1e3651817917c40ca3";
         Twilio.init(ACCOUNT_SID, AUTH_TOKEN);
-        Message.creator(new PhoneNumber(this.params.get("to").getAsString()),
-                new PhoneNumber(this.params.get("from").getAsString()),
-                this.params.get("body").getAsString()).create();
+        Message.creator(new PhoneNumber(this.getParams().get("to").getAsString()),
+                new PhoneNumber(this.getParams().get("from").getAsString()),
+                this.getParams().get("body").getAsString()).create();
         return "SMS sent successfully";
     }
 

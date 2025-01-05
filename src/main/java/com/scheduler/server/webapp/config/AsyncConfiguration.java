@@ -15,8 +15,8 @@ public class AsyncConfiguration {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         int processors = Runtime.getRuntime().availableProcessors();
         executor.setQueueCapacity(100);
-        executor.setMaxPoolSize(processors * 2 + 1);
-        executor.setCorePoolSize(processors * 2 + 1);
+        // executor.setMaxPoolSize(processors * 2 + 1);
+        executor.setCorePoolSize(processors);
         executor.setThreadNamePrefix("job-scheduler-thread-");
         executor.initialize();
         return executor;
