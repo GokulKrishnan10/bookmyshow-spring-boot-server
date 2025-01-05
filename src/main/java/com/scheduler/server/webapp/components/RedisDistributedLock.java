@@ -17,10 +17,7 @@ public class RedisDistributedLock {
 
     public boolean acquireLock(String lockKey, String lockValue, long lockTimeout, TimeUnit unit) {
         Object value = this.redisTemplate.opsForValue().get(lockKey);
-        // System.out.println(value + "-=-=-=-=-=-=-=-=-=-=-=>>");
         if (value != null && "expired".equals(value.toString())) {
-            // System.out.println(value.toString() + " and
-            // -=-=-=-=-=-=-=-=-=-=-=-=-=>>>>>>>>>>>>>" + lockKey);
             return false;
         }
         return this.redisTemplate.opsForValue().setIfAbsent(lockKey, lockValue, lockTimeout, unit);
@@ -28,7 +25,5 @@ public class RedisDistributedLock {
 
     public void releaseLock(String lockKey) {
         this.redisTemplate.opsForValue().set(lockKey, "expired", 24, TimeUnit.HOURS);
-        // System.out.println("Lock released -=-=-=-=-=-=-=-=-=-=-=-=>> " +
-        // this.redisTemplate.opsForValue().get(lockKey));
     }
 }
