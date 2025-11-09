@@ -9,21 +9,9 @@ import com.scheduler.server.webapp.enums.JobStatus;
 import com.scheduler.server.webapp.enums.JobType;
 import com.scheduler.server.webapp.enums.Microservices;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(name = Job.TABLE_NAME, schema = "\"jobs\"", indexes = {
@@ -70,5 +58,4 @@ public class Job implements Serializable {
     @Column(name = "created_at", nullable = false)
     @CurrentTimestamp
     private Timestamp createdAt;
-
 }

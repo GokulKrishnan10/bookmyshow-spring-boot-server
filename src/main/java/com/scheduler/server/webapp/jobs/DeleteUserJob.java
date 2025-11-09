@@ -3,7 +3,6 @@ package com.scheduler.server.webapp.jobs;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.google.gson.JsonObject;
 import com.scheduler.server.webapp.enums.JobType;
 import com.scheduler.server.webapp.jobs.defns.ScheduledJob;
 import com.scheduler.server.webapp.services.UserService;
@@ -14,19 +13,16 @@ public class DeleteUserJob extends ScheduledJob {
     @Autowired
     private UserService service;
 
-    // public DeleteUserJob(UserService service) {
-    // this.service = service;
-    // }
-
     @Override
     public String executeJob() {
         System.out.println("User deletion Job");
-        if (params == null) {
+        if (getParams() == null) {
             System.out.println("User deletion Job---> Params is null");
             return "Params not provided";
         }
 
-        String message = this.service.deleteUserByEmail(params.get("email").getAsString());
+        String email = getParams().get("email").getAsString();
+        String message = service.deleteUserByEmail(email);
         System.out.println(message);
         return "User deletion successful";
     }

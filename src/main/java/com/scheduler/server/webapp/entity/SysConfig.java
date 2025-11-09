@@ -7,26 +7,19 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import com.scheduler.server.webapp.enums.Region;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 
 @Entity
 @Table(name = SysConfig.TABLE_NAME, schema = "\"app_users\"", indexes = {
-        @Index(name = "", columnList = "type,is_enabled")
+        @Index(name = "idx_type_is_enabled", columnList = "type,is_enabled")
 })
 @Builder
 @Getter
 public class SysConfig {
     public static final String TABLE_NAME = "sys_configs";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -61,5 +54,4 @@ public class SysConfig {
     @Column(name = "modified_at", nullable = false)
     @UpdateTimestamp
     private Timestamp updatedAt;
-
 }

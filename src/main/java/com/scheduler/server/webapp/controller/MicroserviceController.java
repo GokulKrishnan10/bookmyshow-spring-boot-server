@@ -8,24 +8,29 @@ import java.net.http.HttpResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.scheduler.server.webapp.response.JsonResponse;
 
+@RestController
 @RequestMapping("/api/ms")
 public class MicroserviceController {
+
+    private final HttpClient httpClient = HttpClient.newHttpClient();
 
     @RequestMapping("/payments")
     public ResponseEntity<JsonResponse> makePaymentsCall(HttpRequest request) {
         try {
-            HttpResponse<Object> response = HttpClient.newHttpClient().send(request, null);
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             Object data = response.body();
             return ResponseEntity
                     .ok(JsonResponse.builder().data(data).message("successful").status(HttpStatus.OK).build());
         } catch (IOException | InterruptedException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(JsonResponse.builder().message("Error occurred").status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .build());
         }
-        return ResponseEntity.ok(new JsonResponse());
     }
 
     @RequestMapping("/orders")

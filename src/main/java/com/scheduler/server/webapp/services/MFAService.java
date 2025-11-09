@@ -19,24 +19,34 @@ import dev.samstevens.totp.time.TimeProvider;
 
 import static dev.samstevens.totp.util.Utils.getDataUriForImage;
 
-// MultiFactor Authentication for the App, and can be verified using Google Authenticator
-// TODO:
 @Service
 public class MFAService {
+
+    private static final int KEY_BYTES_LENGTH = 4;
+    private static final int QR_CODE_DIGITS = 6;
+    private static final int QR_CODE_PERIOD = 30;
+    private static final String QR_CODE_ISSUER = "Spring Boot App";
+    private static final String QR_CODE_IMAGE_TYPE = "image/png";
+
     public String getSecretKey() {
         SecureRandom randomKey = new SecureRandom();
-        byte[] keyBytes = new byte[4];
+        byte[] keyBytes = new byte[KEY_BYTES_LENGTH];
         randomKey.nextBytes(keyBytes);
         return Base64.getEncoder().encodeToString(keyBytes);
     }
 
     public String generateQRCodeImage(String secretKey, String data) throws QrGenerationException {
-        QrData qrImage = new QrData.Builder().label(data).issuer("Spring Boot App").secret(secretKey)
-                .algorithm(HashingAlgorithm.SHA1).digits(6).period(30).build();
+        QrData qrImage = new QrData.Builder()
+                .label(data)
+                .issuer(QR_CODE_ISSUER)
+                .secret(secretKey)
+                .algorithm(HashingAlgorithm.SHA1)
+                .digits(QR_CODE_DIGITS)
+                .period(QR_CODE_PERIOD)
+                .build();
         QrGenerator generator = new ZxingPngQrGenerator();
         byte[] imageData = generator.generate(qrImage);
-        String pngStr = getDataUriForImage(imageData, "image/png");
-        return pngStr;
+        return getDataUriForImage(imageData, QR_CODE_IMAGE_TYPE);
     }
 
     public String getClaimsForQRCodeImage() {

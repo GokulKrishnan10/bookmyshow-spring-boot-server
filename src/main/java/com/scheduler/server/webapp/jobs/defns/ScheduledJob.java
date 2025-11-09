@@ -16,15 +16,22 @@ import com.scheduler.server.webapp.services.LockService;
 public abstract class ScheduledJob {
 
     @Autowired
-    JobService jobService;
+    private JobService jobService;
 
     @Autowired
-    LockService lockService;
+    private LockService lockService;
 
-    protected JsonObject params;
+    private JsonObject params;
 
     public synchronized void initialize(JsonObject params) {
+        this.validateParams();
         this.params = params;
+    }
+
+    public void validateParams() {
+        // Default implementation does nothing.
+        // Subclasses can override to provide specific validation logic.
+
     }
 
     public synchronized JsonObject getParams() {
@@ -34,22 +41,27 @@ public abstract class ScheduledJob {
     public void runTask(Job schJob) {
         try {
             this.executeJob();
-
+            jobService.insertSuccess(schJob);
         } catch (Exception exception) {
             jobService.insertFailedStatus(schJob, exception.getMessage());
         } finally {
-            jobService.insertSuccess(schJob);
             this.removeLock(schJob.getId());
             jobService.deleteJob(schJob.getId());
         }
     }
 
-    abstract public String executeJob() throws Exception;
+    public void validate() {
+        if (this.params == null) {
+            throw new IllegalStateException("Job parameters not initialized.");
+        }
+    }
 
-    abstract public JobType getJobType();
+    public abstract String executeJob() throws Exception;
+
+    public abstract JobType getJobType();
 
     public boolean lockTheJob(Job job) {
-        return lockService.acquireLock(("job-" + job.getId()), "locked", 15);
+        return lockService.acquireLock("job-" + job.getId(), "locked", 15);
     }
 
     public void removeLock(Long id) {
@@ -60,12 +72,13 @@ public abstract class ScheduledJob {
         JobType jobType = this.getJobType();
         if (jobType.isRecurring()) {
             String jsonString = this.getParams().toString();
-            Job job = Job.builder().jobName(jobType).params(jsonString)
+            Job job = Job.builder()
+                    .jobName(jobType)
+                    .params(jsonString)
                     .scheduledAt(java.sql.Timestamp
                             .from(Instant.now().plus(Duration.ofDays(jobType.getFrequency().getDays()))))
                     .build();
             jobService.scheduleJob(job);
         }
     }
-
 }

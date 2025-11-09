@@ -22,35 +22,32 @@ import jakarta.servlet.http.HttpServletResponse;
 public class JwtFilter extends OncePerRequestFilter {
 
     @Autowired
-    JwtService jwtService;
+    private JwtService jwtService;
 
     @Autowired
-    UserService userService;
+    private UserService userService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
 
-        final String token = authHeader.substring(7);
-        final String email = jwtService.extractUserName(token);
-        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            SecurityContextHolder.setContext(null);
-            User user = userService.getUserByUserName(email);
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            final String token = authHeader.substring(7);
+            final String email = jwtService.extractUserName(token);
 
-            if (jwtService.verifyJwtToken(token, user)) {
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null,
-                        user.getAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                User user = userService.getUserByUserName(email);
+
+                if (jwtService.verifyJwtToken(token, user)) {
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user, null,
+                            user.getAuthorities());
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
         }
 
         filterChain.doFilter(request, response);
     }
-
 }

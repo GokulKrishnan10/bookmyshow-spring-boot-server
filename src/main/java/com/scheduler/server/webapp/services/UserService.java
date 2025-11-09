@@ -10,7 +10,6 @@ import com.scheduler.server.webapp.exception.AppException;
 import com.scheduler.server.webapp.repository.UserRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 import jakarta.transaction.Transactional;
 
@@ -19,17 +18,18 @@ import com.scheduler.server.webapp.mappers.UserMapper;
 
 @Service
 public class UserService {
-    private UserRepository userRepo;
-    private JwtService service;
+    private final UserRepository userRepo;
+    private final JwtService service;
+    private final BCryptPasswordEncoder encoder;
 
     public UserService(UserRepository userRepository, JwtService jwtService) {
         this.userRepo = userRepository;
         this.service = jwtService;
+        this.encoder = new BCryptPasswordEncoder(16);
     }
 
     @Transactional
     public String saveCustomer(User entity) {
-
         User user = User.builder()
                 .name(entity.getName())
                 .dob(entity.getDob())
@@ -37,13 +37,15 @@ public class UserService {
                 .country(entity.getCountry())
                 .email(entity.getEmail())
                 .role(entity.getRole())
-                .password(getHashedPassword(entity.getPassword())).build();
+                .password(getHashedPassword(entity.getPassword()))
+                .build();
         userRepo.save(user);
         return user.getId().toString();
     }
 
     public User getUserByUserName(String mail) {
-        return userRepo.findByEmail(mail).get(0);
+        return userRepo.findByEmail(mail).stream().findFirst()
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
     @Transactional
@@ -53,8 +55,9 @@ public class UserService {
             return "User deletion Successful";
         } catch (Exception e) {
             throw AppException.builder()
-                    .message("User Not Found")
-                    .status(HttpStatus.NOT_FOUND).build();
+                    .message("User Not Found: " + e.getMessage())
+                    .status(HttpStatus.NOT_FOUND)
+                    .build();
         }
     }
 
@@ -65,8 +68,9 @@ public class UserService {
             return "User deletion successful";
         } catch (Exception e) {
             throw AppException.builder()
-                    .message("User Not Found" + e.getMessage())
-                    .status(HttpStatus.NOT_FOUND).build();
+                    .message("User Not Found: " + e.getMessage())
+                    .status(HttpStatus.NOT_FOUND)
+                    .build();
         }
     }
 
@@ -80,7 +84,7 @@ public class UserService {
     }
 
     public UserDto getUserById(Long id) {
-        User user = Optional.ofNullable(userRepo.findById(id)).get()
+        User user = userRepo.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("specified user not found"));
         return UserMapper.INSTANCE.toUserDto(user);
     }
@@ -89,14 +93,13 @@ public class UserService {
         if (!verifyUser(user)) {
             throw AppException.builder()
                     .message("User Not Found")
-                    .status(HttpStatus.NOT_FOUND).build();
+                    .status(HttpStatus.NOT_FOUND)
+                    .build();
         }
         return service.generateJwtToken(user);
     }
 
     public String getHashedPassword(String password) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(16);
         return encoder.encode(password);
     }
-
 }

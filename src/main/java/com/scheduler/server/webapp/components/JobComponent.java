@@ -1,6 +1,7 @@
 package com.scheduler.server.webapp.components;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,37 +18,36 @@ import com.scheduler.server.webapp.exception.AppException;
 import com.scheduler.server.webapp.jobs.defns.ScheduledJob;
 import com.scheduler.server.webapp.services.JobService;
 
-import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class JobComponent {
 
+    private static final Logger logger = LoggerFactory.getLogger(JobComponent.class);
+    private static final Gson gson = new Gson();
+
     @Autowired
-    JobService jobService;
+    private JobService jobService;
 
     private final Map<JobType, ScheduledJob> jobMap;
 
-    @Autowired
     public JobComponent(Map<JobType, ScheduledJob> jobMap) {
         this.jobMap = jobMap;
     }
 
     @Scheduled(fixedRate = 100)
     @Async
-    public void readFromJobTable() throws Exception {
+    public void readFromJobTable() {
         List<Job> jobs = jobService.getJobByTimeRange();
 
         jobs.forEach(schJob -> {
             try {
-                executeJob(schJob.getJobName(),
-                        getJsonFromString(schJob.getParams()), schJob);
-
+                executeJob(schJob.getJobName(), getJsonFromString(schJob, schJob.getParams()), schJob);
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("Error executing job: {}", schJob.getJobName(), e);
             }
-
         });
-
     }
 
     private ScheduledJob getScheduledJob(JobType jobType) {
@@ -60,19 +60,23 @@ public class JobComponent {
 
         if (lock) {
             job.initialize(params);
+            job.validate();
             jobService.saveStatus(schJob.getId(), JobStatus.RUNNING);
-            System.out.println(
-                    "Job is being executed " + job.getJobType().toString() + " and job id is " + schJob.getId());
+            logger.info("Job is being executed {} and job id is {}", job.getJobType(), schJob.getId());
             job.runTask(schJob);
             jobService.saveStatus(schJob.getId(), JobStatus.SUCCESS);
             job.recurringSchedule();
         }
-
     }
 
-    private JsonObject getJsonFromString(String params) {
-        JsonObject json = new Gson().fromJson(params, JsonObject.class);
-        return json;
+    private JsonObject getJsonFromString(Job schJob, String params) throws Exception {
+        try {
+            return gson.fromJson(params, JsonObject.class);
+        } catch (Exception exception) {
+            jobService.insertFailedStatus(schJob, exception.getMessage());
+            throw new Exception("Invalid parameters for job " + schJob.getJobName());
+        }
+
     }
 
     public void invokeMethodFromClass(String className, JsonObject params) {
@@ -80,7 +84,8 @@ public class JobComponent {
             // job.initialize(params);
             // job.executeJob();
         } catch (Exception ex) {
-            throw AppException.builder().status(HttpStatus.INTERNAL_SERVER_ERROR)
+            throw AppException.builder()
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .message("Job Definition not found " + ex.getLocalizedMessage())
                     .build();
         }

@@ -1,7 +1,8 @@
 package com.scheduler.server.webapp.entity;
 
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
 
 import org.hibernate.annotations.CurrentTimestamp;
 import org.springframework.security.core.GrantedAuthority;
@@ -76,7 +77,6 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-
         Collection<UserRole> list = new LinkedList<>();
         list.add(role);
         return list;
@@ -94,17 +94,16 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return this.isLocked;
+        return !this.isLocked;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return this.isExpired;
+        return !this.isExpired;
     }
 
     @Override
     public boolean isEnabled() {
         return this.isEnabled;
     }
-
 }

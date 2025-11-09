@@ -14,10 +14,12 @@ public class AsyncConfiguration {
     public Executor taskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         int processors = Runtime.getRuntime().availableProcessors();
-        executor.setQueueCapacity(100);
-        // executor.setMaxPoolSize(processors * 2 + 1);
         executor.setCorePoolSize(processors);
+        executor.setMaxPoolSize(processors * 2);
+        executor.setQueueCapacity(200);
         executor.setThreadNamePrefix("job-scheduler-thread-");
+        executor.setKeepAliveSeconds(60);
+        executor.setAllowCoreThreadTimeOut(true);
         executor.initialize();
         return executor;
     }

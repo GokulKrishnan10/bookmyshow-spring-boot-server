@@ -1,9 +1,6 @@
 package com.scheduler.server.webapp.jobs;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
+import java.io.*;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
@@ -24,63 +21,75 @@ import com.scheduler.server.webapp.services.JobService;
 @Component
 public class SendJobsAuditJob extends ScheduledJob {
 
-    public final String fileName = "job-audits.csv";
-    // String.format("job-audits.csv", Instant.now().toString());
+    private static final String FILE_NAME = "job-audits.csv";
+    private static final String ZIP_FILE_NAME = "audits.zip";
+    private static final String EMAIL_JSON_TEMPLATE = "{\"toAddrs\":\"gokulkrish.elangovan10@gmail.com\",\"subject\":\"Monthly Job Audits Export %s\",\"content\":\"Please find the below attached audits for the Job table.\nThanks & Regards,\nSpring boot app.\",\"has_attachment\":true,\"fileName\":\"audits.zip\"}";
 
     @Autowired
-    JobService service;
+    private JobService service;
 
     @Override
     public String executeJob() throws Exception {
-        List<JobResult> list = this.service.getAllAudits();
-        try (CSVWriter writer = new CSVWriter(new FileWriter(fileName))) {
-            String[] headers = new String[] { "id", "job_name", "job_status", "created_at", "scheduled_at", "error",
-                    "exported_at" };
-            writer.writeNext(headers);
-            list.forEach(record -> {
-
-                String[] csvRecord = new String[] {
-                        record.getId().toString(),
-                        record.getJobName().name(),
-                        record.getJobStatus().name(),
-                        record.getCreatedAt().toString(),
-                        record.getScheduledAt().toString(),
-                        record.getError(),
-                        Timestamp.from(Instant.now()).toString()
-                };
-                writer.writeNext(csvRecord);
-            });
-            this.zipAndSendTheFile("job-audits.csv");
-            String json = "{\"toAddrs\":\"gokulkrish.elangovan10@gmail.com\",\"subject\":\"Monthly Job Audits Export %s\",\"content\":\"Please find the below attached audits for the Job table.\nThanks & Regards,\nSpring boot app.\",\"has_attachment\":true,\"fileName\":\"audits.zip\"}";
-            json = String.format(json, Timestamp.from(Instant.now()).toString());
-            this.service.scheduleJob(Job.builder().jobName(JobType.SEND_EMAIL)
-                    .params(json)
-                    .scheduledAt(Timestamp.from(Instant.now().plus(Duration.ofSeconds(10)))).build());
+        List<JobResult> list = service.getAllAudits();
+        try (CSVWriter writer = new CSVWriter(new FileWriter(FILE_NAME))) {
+            writeCsvHeader(writer);
+            writeCsvRecords(writer, list);
+            zipAndSendTheFile(FILE_NAME);
+            scheduleEmailJob();
         } catch (Exception e) {
-
+            // Log the exception
         }
         return getJobType().name() + " executed successfully";
     }
 
-    public void zipAndSendTheFile(String sourceFile) throws Exception {
-        FileOutputStream fos = new FileOutputStream("audits.zip");
-        ZipOutputStream zip = new ZipOutputStream(fos);
-        File file = new File(sourceFile);
-        FileInputStream fis = new FileInputStream(file);
-        ZipEntry zipEntry = new ZipEntry(file.getName());
-        zip.putNextEntry(zipEntry);
-        byte[] bytes = new byte[1024];
-        int length;
-        while ((length = fis.read(bytes)) >= 0) {
-            zip.write(bytes, 0, length);
+    private void writeCsvHeader(CSVWriter writer) {
+        String[] headers = { "id", "job_name", "job_status", "created_at", "scheduled_at", "error", "exported_at" };
+        writer.writeNext(headers);
+    }
+
+    private void writeCsvRecords(CSVWriter writer, List<JobResult> list) {
+        list.forEach(record -> {
+            String[] csvRecord = {
+                    record.getId().toString(),
+                    record.getJobName().name(),
+                    record.getJobStatus().name(),
+                    record.getCreatedAt().toString(),
+                    record.getScheduledAt().toString(),
+                    record.getError(),
+                    Timestamp.from(Instant.now()).toString()
+            };
+            writer.writeNext(csvRecord);
+        });
+    }
+
+    private void zipAndSendTheFile(String sourceFile) throws IOException {
+        try (FileOutputStream fos = new FileOutputStream(ZIP_FILE_NAME);
+                ZipOutputStream zip = new ZipOutputStream(fos);
+                FileInputStream fis = new FileInputStream(new File(sourceFile))) {
+
+            ZipEntry zipEntry = new ZipEntry(sourceFile);
+            zip.putNextEntry(zipEntry);
+
+            byte[] bytes = new byte[1024];
+            int length;
+            while ((length = fis.read(bytes)) >= 0) {
+                zip.write(bytes, 0, length);
+            }
         }
-        zip.close();
-        fis.close();
+    }
+
+    private void scheduleEmailJob() {
+        String json = String.format(EMAIL_JSON_TEMPLATE, Timestamp.from(Instant.now()).toString());
+        Job emailJob = Job.builder()
+                .jobName(JobType.SEND_EMAIL)
+                .params(json)
+                .scheduledAt(Timestamp.from(Instant.now().plus(Duration.ofSeconds(10))))
+                .build();
+        service.scheduleJob(emailJob);
     }
 
     @Override
     public JobType getJobType() {
         return JobType.EXPORT_JOBS_AUDIT_TO_CSV;
     }
-
 }

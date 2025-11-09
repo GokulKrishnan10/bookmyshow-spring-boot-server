@@ -15,7 +15,7 @@ public class JobController {
     @Autowired
     JobMapperService service;
 
-    @PostMapping("/insert")
+    @PostMapping
     public ResponseEntity<Object> insertJobMapping(JobMapping appJob) {
         service.insertMapper(appJob);
         return ResponseEntity.ok("success");

@@ -1,25 +1,11 @@
 package com.scheduler.server.webapp.entity;
 
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
-
+import jakarta.persistence.*;
 import java.sql.Timestamp;
-
 import org.hibernate.annotations.CreationTimestamp;
-
 import com.scheduler.server.webapp.enums.JobStatus;
 import com.scheduler.server.webapp.enums.JobType;
-
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = JobResult.TABLE_NAME, schema = "\"jobs\"")
@@ -34,12 +20,12 @@ public class JobResult {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "job_name", nullable = false)
     @Enumerated(EnumType.ORDINAL)
+    @Column(name = "job_name", nullable = false)
     private JobType jobName;
 
-    @Column(name = "created_at", nullable = false)
     @CreationTimestamp
+    @Column(name = "created_at", nullable = false)
     private Timestamp createdAt;
 
     @Column(name = "scheduled_at", nullable = false)
@@ -48,8 +34,8 @@ public class JobResult {
     @Column(name = "error", nullable = false, columnDefinition = "text")
     private String error;
 
-    @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
     private JobStatus jobStatus;
 
     @Column(name = "executed_at", nullable = false)

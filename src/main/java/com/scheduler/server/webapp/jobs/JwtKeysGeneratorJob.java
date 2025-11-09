@@ -6,7 +6,6 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.util.Base64;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.scheduler.server.webapp.enums.JobType;
@@ -16,8 +15,11 @@ import com.scheduler.server.webapp.services.SysConfigService;
 @Component
 public class JwtKeysGeneratorJob extends ScheduledJob {
 
-    @Autowired
-    SysConfigService service;
+    private final SysConfigService service;
+
+    public JwtKeysGeneratorJob(SysConfigService service) {
+        this.service = service;
+    }
 
     @Override
     public String executeJob() throws Exception {
